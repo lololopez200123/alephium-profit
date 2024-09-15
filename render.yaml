@@ -12,16 +12,16 @@ services:
       - key: DB_NAME
         sync: false
 
-    - type: web
-      name: frontend
-      env: node
-      buildCommand: cd apps/frontend-next && yarn install && yarn build
-      startCommand: cd apps/frontend-next && yarn start
-      envVars:
-        - key: NODE_ENV
-          value: production
-        - key: NEXT_PUBLIC_BACKEND_URL
-          fromService:
-            type: web
-            name: backend
-            envVarKey: RENDER_EXTERNAL_HOSTNAME
+  - type: web
+    name: frontend
+    env: node
+    buildCommand: cd apps/frontend-next && yarn install && yarn build
+    startCommand: cd apps/frontend-next && yarn start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_BACKEND_URL
+        fromService:
+          type: web
+          name: backend
+          envVarKey: RENDER_EXTERNAL_HOSTNAME

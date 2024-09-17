@@ -11,24 +11,24 @@ function Home() {
     { name: 'ALEPHIUM', amount: '10 ALPH', price: '2.5' },
   ];
   return (
-    <>
-      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '6%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: '80%', paddingX: '1rem' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '7%' }}>
         <Typography variant="caption">OVERVIEW</Typography>
       </Box>
-      <Box sx={{ width: '97%', display: 'flex', marginBottom: '4%' }}>
+      <Box sx={{ display: 'flex', position: 'relative', left: '-1rem', marginBottom: '3%' }}>
         <Image width="140" height="44" src="/main-logo.svg" alt="logo"></Image>
       </Box>
-      <Box sx={{ width: '90%' }}>
+      <Box sx={{ marginBottom: '34%' }}>
         <Typography variant="h4">
           <p>Lorem ipsum dolor</p>
           <p>sit amet,</p>
           <p>consectetur</p>
         </Typography>
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column', width: '90%', gap: '8px' }}>
-        <Typography fontSize="0.625rem" variant="caption">
-          COINS
-        </Typography>
+      <Typography fontSize="0.625rem" variant="caption">
+        COINS
+      </Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px', overflow: 'auto', flex: '1 1 auto' }}>
         {test.map((coin) => {
           return (
             <Box
@@ -50,7 +50,8 @@ function Home() {
                     height: '24px',
                     background: 'white',
                     borderRadius: '30px',
-                    margin: '12px',
+                    margin: '0.8rem',
+                    marginInline: '1.25rem',
                   }}
                 >
                   <Image width="16" height="16" alt="1" src="/ALPHAGA.png"></Image>
@@ -59,7 +60,7 @@ function Home() {
                   {coin.name}
                 </Typography>
               </Box>
-              <Box sx={{ width: '14%', display: 'flex', alignItems: 'left', flexDirection: 'column', marginInline: '3%', justifyContent: 'center' }}>
+              <Box sx={{ width: '16%', display: 'flex', alignItems: 'left', flexDirection: 'column', marginInline: '3%', justifyContent: 'center' }}>
                 <Typography variant="subtitle1" key={coin.price}>
                   {coin.price}
                 </Typography>
@@ -71,7 +72,7 @@ function Home() {
           );
         })}
       </Box>
-    </>
+    </Box>
   );
 }
 

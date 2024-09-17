@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
@@ -34,6 +35,8 @@ function NavBottom() {
   return (
     <Box
       sx={{
+        height: '10%',
+        maxHeight: '70px',
         position: 'absolute',
         bottom: '0',
         left: '0',

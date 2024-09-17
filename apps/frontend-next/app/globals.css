@@ -6,8 +6,8 @@ html {
   background-color: #1e1e1e;
   display: flex;
   color: white;
-  justify-content: center; /* Centrar el contenedor horizontalmente */
-  align-items: center; /* Centrar el contenedor verticalmente */
+  align-items: center; /* Centrar verticalmente siempre */
+  justify-content: center;
 }
 
 * {
@@ -24,11 +24,11 @@ a {
 .container {
   background: linear-gradient(180deg, #0b1426 60%, rgba(40, 231, 197, 0.3) 130%);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%; /* Por defecto, ocupe el 100% del viewport */
   max-height: 100vh; /* Limitar el tamaño máximo del contenedor */
   width: 100%;
   max-width: 450px; /* El tamaño típico de una ventana de chat de móvil */
+  position: fixed;
 }

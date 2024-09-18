@@ -4,8 +4,8 @@ A profit and loss tracking application for Alephium, built with Next.js and Nest
 
 ## Project Structure
 
-- `fe-challenge-test-next`: Frontend (Next.js)
-- `be-challenge-test`: Backend (NestJS)
+- `frontend-next`: Frontend (Next.js)
+- `backend-nest`: Backend (NestJS)
 
 ## Features
 
@@ -27,7 +27,7 @@ A profit and loss tracking application for Alephium, built with Next.js and Nest
 ### Backend
 
 ```bash
-cd apps/be-challenge-test
+cd apps/backend-nest
 yarn install
 yarn run start:prod
 ```

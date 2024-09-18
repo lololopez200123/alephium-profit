@@ -29,6 +29,7 @@ a {
   height: 100%; /* Por defecto, ocupe el 100% del viewport */
   max-height: 100vh; /* Limitar el tamaño máximo del contenedor */
   width: 100%;
+  max-height: 850px;
   max-width: 450px; /* El tamaño típico de una ventana de chat de móvil */
-  position: fixed;
+  position: relative;
 }

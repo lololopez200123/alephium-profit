@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './models/user.model';
 import { CreateUserDto } from './dto/create-user.dto';
+import { IUser } from './interfaces/user.interface';
 
 type UserDocument = User & Document;
 
@@ -36,6 +37,20 @@ export class UserService {
       return resp;
     } catch (error) {
       throw new HttpException('Error creating user', 500);
+    }
+  }
+
+  async updateSomeProperties(id: string, user: Partial<IUser>) {
+    try {
+      const updatedUser = await this.userModel
+        .findOneAndUpdate({ id: id }, user, { new: true })
+        .exec();
+      if (!updatedUser) {
+        throw new HttpException('User not found', 404);
+      }
+      return updatedUser;
+    } catch (error) {
+      throw new HttpException('Error updating player properties', 500);
     }
   }
 

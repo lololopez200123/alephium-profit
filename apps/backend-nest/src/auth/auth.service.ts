@@ -17,7 +17,9 @@ export class AuthService {
 
   public async generateNonce({ address, publicKey }: GenerateNonceDto) {
     const nonce = crypto.getRandomValues(new Uint8Array(16)).join('');
+    const name = 'User';
     const objectData = {
+      name,
       address,
       publicKey,
       nonce,
@@ -29,7 +31,7 @@ export class AuthService {
       await this.userService.createUser(objectData);
     }
     return {
-      message: `Alephium Battle wants you to sign in with your Alephium account:\n${address}\n\nURI: https://alephium-battle.vercel.app\nVersion: 1\nNonce: ${nonce}\nIssued At: ${new Date()}`,
+      message: `Alephium Profit wants you to sign in with your Alephium account:\n${address}\n\nURI: https://alephium-profit.com\nVersion: 1\nNonce: ${nonce}\nIssued At: ${new Date()}`,
     };
   }
 

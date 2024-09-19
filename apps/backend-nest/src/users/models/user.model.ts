@@ -22,6 +22,9 @@ export class User extends Document {
   @Prop({ required: true, default: ROLES.BASIC })
   roleUser: string;
 
+  @Prop({ required: false })
+  isAnsSeted: boolean;
+
   @Prop({ type: [String], default: [] })
   favoriteCoins: string[];
 }

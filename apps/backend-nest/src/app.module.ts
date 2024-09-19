@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CandidatesModule } from './candidates/candidates.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { AlephiumWalletModule } from './alephium-wallet/alephium-wallet.module';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { ErrorFilter } from './middleware/catchError.middleware';
+import { LoggerInterceptor } from './utils/logger.interceptor';
+import { IndexerAlephiumModule } from './indexer-alephium/indexer-alephium.module';
 
 @Module({
   imports: [
@@ -18,9 +24,22 @@ import { AppService } from './app.service';
       }),
       inject: [ConfigService],
     }),
-    CandidatesModule,
+    UsersModule,
+    AuthModule,
+    AlephiumWalletModule,
+    IndexerAlephiumModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: ErrorFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggerInterceptor,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}

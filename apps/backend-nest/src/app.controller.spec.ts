@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Santander API Candidates!"', () => {
-      expect(appController.getHello()).toBe('Santander API Candidates!');
+    it('should return "Alephium Profit API"', () => {
+      expect(appController.getHello()).toBe('Alephium Profit API');
     });
   });
 });

@@ -15,7 +15,7 @@ function Home() {
     <Box
       sx={{
         display: 'flex',
-        paddingTop: '50px',
+        paddingTop: '60px',
         paddingBottom: '78px',
         flexDirection: 'column',
         width: '100%',

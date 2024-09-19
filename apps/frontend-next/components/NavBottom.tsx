@@ -22,7 +22,7 @@ function NavBottom() {
       linkImage: '/graphs.svg',
       linkImageSelected: '/graphs-selected.svg',
       alt: 'Graphs',
-      href: '/graphs',
+      href: '/profit',
     },
     {
       name: 'Wallet',

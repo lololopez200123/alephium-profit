@@ -64,4 +64,36 @@ export class UserService {
     }
     return user;
   }
+
+  async addFavoriteCoin(address: string, coin: string): Promise<User> {
+    const user = await this.userModel.findOne({ address }).exec();
+    if (!user) {
+      throw new HttpException('Usuario no encontrado', 404);
+    }
+
+    if (!user.favoriteCoins.includes(coin)) {
+      user.favoriteCoins.push(coin);
+      await user.save();
+    }
+    return user;
+  }
+
+  async removeFavoriteCoin(address: string, coin: string): Promise<User> {
+    const user = await this.userModel.findOne({ address }).exec();
+    if (!user) {
+      throw new HttpException('Usuario no encontrado', 404);
+    }
+
+    user.favoriteCoins = user.favoriteCoins.filter((c) => c !== coin);
+    await user.save();
+    return user;
+  }
+
+  async getFavoriteCoins(address: string): Promise<string[]> {
+    const user = await this.userModel.findOne({ address }).exec();
+    if (!user) {
+      throw new HttpException('Usuario no encontrado', 404);
+    }
+    return user.favoriteCoins;
+  }
 }

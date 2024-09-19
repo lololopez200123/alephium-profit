@@ -6,13 +6,17 @@ import {
   HttpStatus,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import { IndexerAlephiumService } from './indexer-alephium.service';
+import { UserService } from 'src/users/users.service';
+import { RequestWithUser } from 'src/users/interfaces/user.interface';
 
 @Controller('indexer-alephium')
 export class IndexerAlephiumController {
   constructor(
     private readonly indexerAlephiumService: IndexerAlephiumService,
+    private readonly userService: UserService,
   ) {}
 
   @Get('my-balance')
@@ -50,5 +54,18 @@ export class IndexerAlephiumController {
   async getMostPopularCoinsInfo() {
     const assets = ['Alephium', 'Ayin', 'Bitcoin', 'Alphpad', 'Ethereum'];
     return this.indexerAlephiumService.getCryptoMarketInfoBatch(assets);
+  }
+
+  @Get('favorite-coins-info')
+  async getFavoriteCoinsInfo(@Req() req: RequestWithUser) {
+    const address = req.user['address'];
+    const favoriteCoins = await this.userService.getFavoriteCoins(address);
+    if (!favoriteCoins || favoriteCoins.length === 0) {
+      throw new HttpException(
+        'No tienes monedas favoritas',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return this.indexerAlephiumService.getCryptoMarketInfoBatch(favoriteCoins);
   }
 }

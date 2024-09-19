@@ -7,3 +7,11 @@ export interface IUser {
   publicKey: string;
   roleUser: string;
 }
+
+export interface RequestWithUser extends Request {
+  user: {
+    address: string;
+    userId: string;
+    roleUser: string;
+  };
+}

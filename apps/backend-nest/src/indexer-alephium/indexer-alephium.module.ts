@@ -7,11 +7,15 @@ import {
   BalanceHistorySchema,
 } from './model/indexer-alephium.schema';
 import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from 'src/users/models/user.model';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
     HttpModule,
+    UsersModule,
     MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
       { name: BalanceHistory.name, schema: BalanceHistorySchema },
     ]),
   ],

@@ -21,6 +21,9 @@ export class User extends Document {
 
   @Prop({ required: true, default: ROLES.BASIC })
   roleUser: string;
+
+  @Prop({ type: [String], default: [] })
+  favoriteCoins: string[];
 }
 
 export type UserDocument = User & Document;

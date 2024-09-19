@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 
 const PORT = process.env.PORT || 3000;
 
@@ -12,6 +13,8 @@ async function bootstrap() {
       credentials: true,
     },
   });
+  app.use(cookieParser.default());
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // Eliminar propiedades no definidas en el DTO

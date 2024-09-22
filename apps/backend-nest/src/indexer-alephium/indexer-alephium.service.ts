@@ -107,8 +107,6 @@ export class IndexerAlephiumService {
         ),
     );
 
-    console.log(dataResponse);
-
     // Convierte el objeto en un arreglo
     const dataArray = Object.values(dataResponse) as MobulaData[];
 

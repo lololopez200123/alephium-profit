@@ -8,10 +8,14 @@ import {
   BalanceApiResponse,
   BalanceHistoryEntry,
   BalanceResponse,
-  MobulaResponse,
 } from './dto/balance.dto';
 import { BalanceHistory } from './model/indexer-alephium.schema';
 import { ConfigService } from '@nestjs/config';
+import {
+  CoinListItem,
+  MobulaData,
+  MobulaResponse,
+} from './interfaces/coinList';
 
 @Injectable()
 export class IndexerAlephiumService {
@@ -71,23 +75,53 @@ export class IndexerAlephiumService {
     );
   }
 
-  async getCryptoMarketInfoBatch(assets: string[]): Promise<MobulaResponse[]> {
-    const assetsParam = assets.join('%2C'); // Unión de activos separados por coma (codificados en URI)
+  async getCryptoMarketInfoBatch(assets: string[]): Promise<CoinListItem[]> {
+    function createCoinList(
+      data: MobulaData[],
+      alephiumPrice: number,
+    ): CoinListItem[] {
+      return data.map((coinData) => ({
+        logo: coinData.logo,
+        name: coinData.name,
+        priceChange: coinData.price_change_24h,
+        price: coinData.price,
+        amount: coinData.price / alephiumPrice,
+      }));
+    }
+
+    const assetsParam = assets.join('%2C');
     const url = `${this.MOBULA_URL}/market/multi-data?assets=${assetsParam}`;
 
-    return firstValueFrom(
+    // Primero obtén los datos del mercado
+    const dataResponse = await firstValueFrom(
       this.httpService
-        .get<MobulaResponse[]>(url, {
+        .get<MobulaResponse>(url, {
           headers: { 'x-api-key': this.MOBULA_API_KEY },
         })
         .pipe(
-          map((response) => response.data),
+          map((response) => response.data.data), // Accede correctamente a la propiedad 'data'
           catchError((error) => {
             console.error('Error fetching coin market info:', error);
             throw error;
           }),
         ),
     );
+
+    console.log(dataResponse);
+
+    // Convierte el objeto en un arreglo
+    const dataArray = Object.values(dataResponse) as MobulaData[];
+
+    const alephiumData = dataArray.find(
+      (coin) => coin.name.toLowerCase() === 'alephium',
+    );
+    if (!alephiumData) {
+      throw new Error('Alephium data not found');
+    }
+
+    const alephiumPrice = alephiumData.price;
+
+    return createCoinList(dataArray, alephiumPrice);
   }
 
   private async fetchBalance(address: string): Promise<BalanceApiResponse> {

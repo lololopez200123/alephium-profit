@@ -22,6 +22,7 @@ export class IndexerAlephiumService {
   private readonly baseUrl = 'https://indexer.alph.pro/api';
   private readonly MOBULA_URL = 'https://api.mobula.io/api/1';
   private readonly MOBULA_API_KEY = this.configService.get('MOBULA_API_KEY');
+  private readonly ALEPHIUM_NODE = 'https://backend.mainnet.alephium.org';
 
   constructor(
     private httpService: HttpService,
@@ -120,6 +121,36 @@ export class IndexerAlephiumService {
     const alephiumPrice = alephiumData.price;
 
     return createCoinList(dataArray, alephiumPrice);
+  }
+
+  async getPrices(assets: string[]): Promise<{ [key: string]: number }> {
+    if (!assets || assets.length === 0) {
+      throw new Error('Assets array should not be empty');
+    }
+
+    console.log(assets);
+
+    const path = '/market/prices';
+    const queryParams = '?currency=usd';
+    const url = `${this.ALEPHIUM_NODE}${path}${queryParams}`;
+
+    try {
+      const response = await firstValueFrom(
+        this.httpService.post<{ [key: string]: number }>(url, assets, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        }),
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error('Error obtaining prices:', error);
+      throw new Error(
+        'Prices could not be obtained.Please try it again later.',
+      );
+    }
   }
 
   private async fetchBalance(address: string): Promise<BalanceApiResponse> {

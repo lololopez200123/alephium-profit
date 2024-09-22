@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -11,6 +12,7 @@ import {
 import { IndexerAlephiumService } from './indexer-alephium.service';
 import { UserService } from 'src/users/users.service';
 import { RequestWithUser } from 'src/users/interfaces/user.interface';
+import { GetPricesDto } from './dto/get-prices.dto';
 
 @Controller('indexer-alephium')
 export class IndexerAlephiumController {
@@ -56,13 +58,25 @@ export class IndexerAlephiumController {
     return this.indexerAlephiumService.getCryptoMarketInfoBatch(assets);
   }
 
+  @Post('obtain-prices')
+  async getPrices(@Body() getPricesDto: GetPricesDto) {
+    const { assets } = getPricesDto;
+
+    try {
+      const prices = await this.indexerAlephiumService.getPrices(assets);
+      return prices;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   @Get('favorite-coins-info')
   async getFavoriteCoinsInfo(@Req() req: RequestWithUser) {
     const address = req.user['address'];
     const favoriteCoins = await this.userService.getFavoriteCoins(address);
     if (!favoriteCoins || favoriteCoins.length === 0) {
       throw new HttpException(
-        'No tienes monedas favoritas',
+        'You have no favorite coins',
         HttpStatus.NOT_FOUND,
       );
     }

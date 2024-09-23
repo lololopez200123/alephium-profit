@@ -2,47 +2,27 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema()
-export class Token {
-  @Prop()
-  address: string;
-
+export class TokenDetails {
   @Prop()
   name: string;
 
   @Prop()
-  symbol: string;
+  amount: number;
 
   @Prop()
-  decimals: number;
-
-  @Prop()
-  totalSupply: string;
-
-  @Prop()
-  listed: boolean;
-
-  @Prop()
-  description: string;
+  amountOnAlph: number;
 
   @Prop()
   logo: string;
-}
-
-export const TokenSchema = SchemaFactory.createForClass(Token);
-
-@Schema()
-export class TokenBalance {
-  @Prop()
-  userAddress: string;
 
   @Prop()
-  balance: string;
+  percent: number;
 
-  @Prop({ type: TokenSchema })
-  token: Token;
+  @Prop()
+  isFavourite: boolean;
 }
 
-export const TokenBalanceSchema = SchemaFactory.createForClass(TokenBalance);
+export const TokenDetailsSchema = SchemaFactory.createForClass(TokenDetails);
 
 @Schema()
 export class BalanceHistory extends Document {
@@ -52,8 +32,11 @@ export class BalanceHistory extends Document {
   @Prop({ required: true })
   timestamp: number;
 
-  @Prop({ type: [TokenBalanceSchema], default: [] })
-  tokens: TokenBalance[];
+  @Prop({ required: true })
+  totalAmount: number;
+
+  @Prop({ type: [TokenDetailsSchema], default: [] })
+  tokens: TokenDetails[];
 }
 
 export const BalanceHistorySchema =

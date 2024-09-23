@@ -3,8 +3,9 @@ export interface BalanceApiResponse {
 }
 
 export interface BalanceResponse {
-  currentBalance: BalanceApiResponse;
-  history: BalanceHistoryEntry[];
+  totalAmount: number;
+  tokens: TokenDetails[];
+  totalHistory: BalanceHistoryEntry[];
 }
 
 export interface TokenBalance {
@@ -16,7 +17,8 @@ export interface TokenBalance {
 export interface BalanceHistoryEntry {
   address: string;
   timestamp: number;
-  tokens: TokenBalance[];
+  totalAmount: number;
+  tokens: TokenDetails[];
 }
 
 export interface Token {
@@ -28,5 +30,13 @@ export interface Token {
   listed: boolean;
   description: string;
   logo: string;
-  social?: any; // Si utilizas este campo
+}
+
+export interface TokenDetails {
+  name: string;
+  amount: number;
+  amountOnAlph: number;
+  logo: string;
+  percent: number;
+  isFavourite: boolean;
 }

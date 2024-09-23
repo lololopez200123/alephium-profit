@@ -3,6 +3,7 @@ import {
   HttpException,
   Injectable,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -80,35 +81,60 @@ export class UserService {
     return user;
   }
 
-  async addFavoriteCoin(address: string, coin: string): Promise<User> {
-    const user = await this.userModel.findOne({ address }).exec();
-    if (!user) {
-      throw new HttpException('Usuario no encontrado', 404);
-    }
-
-    if (!user.favoriteCoins.includes(coin)) {
-      user.favoriteCoins.push(coin);
-      await user.save();
-    }
-    return user;
-  }
-
-  async removeFavoriteCoin(address: string, coin: string): Promise<User> {
-    const user = await this.userModel.findOne({ address }).exec();
-    if (!user) {
-      throw new HttpException('Usuario no encontrado', 404);
-    }
-
-    user.favoriteCoins = user.favoriteCoins.filter((c) => c !== coin);
-    await user.save();
-    return user;
-  }
-
+  /**
+   * Obtiene los tokens favoritos de un usuario.
+   * @param address Dirección del usuario
+   * @returns Arreglo de direcciones de tokens favoritos
+   */
   async getFavoriteCoins(address: string): Promise<string[]> {
     const user = await this.userModel.findOne({ address }).exec();
     if (!user) {
-      throw new HttpException('Usuario no encontrado', 404);
+      throw new NotFoundException('Usuario no encontrado');
     }
-    return user.favoriteCoins;
+    return user.favoriteTokens;
+  }
+
+  /**
+   * Agrega un token a la lista de favoritos del usuario.
+   * @param address Dirección del usuario
+   * @param tokenAddress Dirección del token a agregar
+   * @returns Usuario actualizado
+   */
+  async addFavoriteCoin(address: string, tokenAddress: string): Promise<User> {
+    const user = await this.userModel.findOne({ address }).exec();
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    if (!user.favoriteTokens.includes(tokenAddress)) {
+      user.favoriteTokens.push(tokenAddress);
+      await user.save();
+    }
+
+    return user;
+  }
+
+  /**
+   * Elimina un token de la lista de favoritos del usuario.
+   * @param address Dirección del usuario
+   * @param tokenAddress Dirección del token a eliminar
+   * @returns Usuario actualizado
+   */
+  async removeFavoriteCoin(
+    address: string,
+    tokenAddress: string,
+  ): Promise<User> {
+    const user = await this.userModel.findOne({ address }).exec();
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    const index = user.favoriteTokens.indexOf(tokenAddress);
+    if (index > -1) {
+      user.favoriteTokens.splice(index, 1);
+      await user.save();
+    }
+
+    return user;
   }
 }

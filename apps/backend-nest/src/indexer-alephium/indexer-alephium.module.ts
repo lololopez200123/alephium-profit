@@ -9,6 +9,8 @@ import {
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/users/models/user.model';
 import { UsersModule } from 'src/users/users.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TokensModule } from 'src/tokens/tokens.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { UsersModule } from 'src/users/users.module';
       { name: User.name, schema: UserSchema },
       { name: BalanceHistory.name, schema: BalanceHistorySchema },
     ]),
+    ScheduleModule.forRoot(),
+    TokensModule,
   ],
   controllers: [IndexerAlephiumController],
   providers: [IndexerAlephiumService],

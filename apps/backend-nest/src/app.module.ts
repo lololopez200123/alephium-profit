@@ -10,6 +10,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ErrorFilter } from './middleware/catchError.middleware';
 import { LoggerInterceptor } from './utils/logger.interceptor';
 import { IndexerAlephiumModule } from './indexer-alephium/indexer-alephium.module';
+import { TokensModule } from './tokens/tokens.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { IndexerAlephiumModule } from './indexer-alephium/indexer-alephium.modul
     AuthModule,
     AlephiumWalletModule,
     IndexerAlephiumModule,
+    TokensModule,
   ],
   controllers: [AppController],
   providers: [

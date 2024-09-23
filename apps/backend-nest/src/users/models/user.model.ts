@@ -26,7 +26,7 @@ export class User extends Document {
   isAnsSeted: boolean;
 
   @Prop({ type: [String], default: [] })
-  favoriteCoins: string[];
+  favoriteTokens: string[];
 }
 
 export type UserDocument = User & Document;

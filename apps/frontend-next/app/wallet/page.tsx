@@ -10,7 +10,7 @@ const test = [
   { name: 'ALEPHIUM', amount: '10 ALPH', price: '2', progress: 50 },
 ];
 
-const dataGraph: number[] = [-100, 200];
+const dataGraph: number[] = [0, 0];
 
 function Wallet() {
   const [activeStates, setActiveStates] = useState<boolean[]>(test.map(() => false));
@@ -33,7 +33,7 @@ function Wallet() {
         display: 'flex',
         flexDirection: 'column',
         paddingTop: '30px',
-        paddingBottom: '78px',
+        paddingBottom: '40px',
         width: '100%',
         height: '90%',
         paddingX: '1rem',
@@ -41,7 +41,7 @@ function Wallet() {
         overflowY: 'auto',
       }}
     >
-      <Box sx={{ paddingTop: '3.5rem' }}>
+      <Box sx={{ paddingTop: '2rem', height: '350px' }}>
         <Typography sx={{ fontSize: '0.9375rem' }}>TOTAL BALANCE</Typography>
         <Box
           sx={{
@@ -62,7 +62,6 @@ function Wallet() {
         </Box>
         <Chart data={dataGraph} />
       </Box>
-
       <Box
         sx={{
           width: '80%',

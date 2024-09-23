@@ -28,7 +28,7 @@ async function Home() {
       sx={{
         display: 'flex',
         paddingTop: '60px',
-        paddingBottom: '78px',
+        paddingBottom: '40px',
         flexDirection: 'column',
         width: '100%',
         height: '90%',

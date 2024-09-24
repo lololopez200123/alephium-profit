@@ -57,24 +57,34 @@ function NavBottom() {
         position: "absolute",
         height: "10%",
         maxHeight: "70px",
+        width: "100%",
         bottom: "0",
         left: "0",
         paddingY: "7px",
         display: "flex",
         alignContent: "center",
-        justifyContent: "center",
+        justifyContent: "space-evenly",
         flexDirection: "row",
         backdropFilter: "blur(10px)",
         background: "rgba(11, 20, 38, 0.5)",
-        width: "100%",
       }}
     >
       {data.map((item) => (
-        <Box key={item.alt} sx={{ textAlign: "center" }}>
+        <Box
+          key={item.alt}
+          sx={{
+            textAlign: "center",
+            width: "20%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           {item.href === "/empty" ? (
             <Box
               sx={{
-                marginInline: "20px",
+                marginInline: "auto",
                 width: "32px",
                 height: "32px",
                 borderRadius: "10px",

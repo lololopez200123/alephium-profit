@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+
 body,
 html {
   height: 100%;
@@ -8,6 +10,7 @@ html {
   color: white;
   align-items: center; /* Centrar verticalmente siempre */
   justify-content: center;
+  font-family: "Poppins", sans-serif;
 }
 
 * {
@@ -20,12 +23,19 @@ a {
   color: inherit;
   text-decoration: none;
 }
-
+p {
+  font-family: "Poppins", sans-serif;
+}
 .container {
-  background: linear-gradient(180deg, #0b1426 60%, rgba(40, 231, 197, 0.3) 130%);
+  background: linear-gradient(
+    180deg,
+    #0b1426 60%,
+    rgba(40, 231, 197, 0.3) 130%
+  );
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   height: 100%; /* Por defecto, ocupe el 100% del viewport */
   max-height: 100vh; /* Limitar el tamaño máximo del contenedor */
   width: 100%;

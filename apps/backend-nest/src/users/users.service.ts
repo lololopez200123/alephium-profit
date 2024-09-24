@@ -44,13 +44,14 @@ export class UserService {
   async updateSomeProperties(id: string, user: Partial<IUser>) {
     try {
       const updatedUser = await this.userModel
-        .findOneAndUpdate({ id: id }, user, { new: true })
+        .findOneAndUpdate({ _id: id }, user, { new: true })
         .exec();
       if (!updatedUser) {
         throw new HttpException('User not found', 404);
       }
       return updatedUser;
     } catch (error) {
+      console.error(error);
       throw new HttpException('Error updating player properties', 500);
     }
   }

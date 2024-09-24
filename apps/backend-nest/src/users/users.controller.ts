@@ -28,27 +28,6 @@ export class UserController {
     private readonly alephiumWalletService: AlephiumWalletService,
   ) {}
 
-  @AdminAccess()
-  @Post()
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.createUser(createUserDto);
-  }
-
-  @AdminAccess()
-  @Get()
-  async findAllUsers(): Promise<User[]> {
-    return this.userService.findAllUsers();
-  }
-
-  @AdminAccess()
-  @Get(':id')
-  async findUserByAdress(@Param('adress') address: string): Promise<User> {
-    if (!Types.ObjectId.isValid(address)) {
-      throw new BadRequestException('Invalid ID!');
-    }
-    return this.userService.findUserByAddress(address);
-  }
-
   @Get('my-info')
   async getMyUserInfo(@Req() req: RequestWithUser): Promise<User> {
     try {
@@ -88,6 +67,27 @@ export class UserController {
     } catch (error) {
       throw new HttpException(error, 500);
     }
+  }
+
+  @AdminAccess()
+  @Post()
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.userService.createUser(createUserDto);
+  }
+
+  @AdminAccess()
+  @Get()
+  async findAllUsers(): Promise<User[]> {
+    return this.userService.findAllUsers();
+  }
+
+  @AdminAccess()
+  @Get(':id')
+  async findUserByAdress(@Param('address') address: string): Promise<User> {
+    if (!Types.ObjectId.isValid(address)) {
+      throw new BadRequestException('Invalid ID!');
+    }
+    return this.userService.findUserByAddress(address);
   }
 
   @Post('favorite-coin')

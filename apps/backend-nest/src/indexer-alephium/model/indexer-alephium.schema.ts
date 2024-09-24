@@ -34,10 +34,25 @@ export class BalanceHistory extends Document {
 
   @Prop({ required: true })
   totalAmount: number;
-
-  @Prop({ type: [TokenDetailsSchema], default: [] })
-  tokens: TokenDetails[];
 }
 
 export const BalanceHistorySchema =
   SchemaFactory.createForClass(BalanceHistory);
+
+@Schema()
+export class FavouriteHistory extends Document {
+  @Prop({ required: true })
+  address: string;
+
+  @Prop({ required: true })
+  tokens: TokenDetails[];
+
+  @Prop({ required: true })
+  timestamp: number;
+
+  @Prop({ required: true })
+  totalAmount: number;
+}
+
+export const FavouriteHistorySchema =
+  SchemaFactory.createForClass(FavouriteHistory);

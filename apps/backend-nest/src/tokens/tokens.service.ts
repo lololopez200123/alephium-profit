@@ -6,8 +6,9 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import BigNumber from 'bignumber.js';
 import { Token } from './models/token.schema';
 import { TokenPrice } from './models/token-price.schema';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { IndexerAlephiumService } from 'src/indexer-alephium/indexer-alephium.service';
 
 @Injectable()
 export class TokensService {
@@ -15,6 +16,8 @@ export class TokensService {
 
   constructor(
     private httpService: HttpService,
+    @Inject(forwardRef(() => IndexerAlephiumService))
+    private indexerAlephiumService: IndexerAlephiumService,
     @InjectModel(Token.name) private tokenModel: Model<Token>,
     @InjectModel(TokenPrice.name) private tokenPriceModel: Model<TokenPrice>,
   ) {}
@@ -52,10 +55,12 @@ export class TokensService {
       const url = `${this.baseUrl}/prices?address=${token.address}`;
       const response = await this.httpService.get(url).toPromise();
 
+      const priceAlph = await this.indexerAlephiumService.getPrices(['ALPH']);
+
       if (response.data.prices && response.data.prices.length > 0) {
         const priceData = response.data.prices[0];
         const price = new BigNumber(priceData.price).dividedBy(
-          new BigNumber(10).pow(priceData.token.decimals),
+          new BigNumber(10).pow(18),
         );
 
         // Crear o actualizar el precio del token
@@ -63,7 +68,8 @@ export class TokensService {
           { tokenAddress: token.address },
           {
             tokenAddress: token.address,
-            priceInAlph: price.toNumber(),
+            priceInAlph: price.toNumber() / Number(priceAlph[0]),
+            priceInUSDT: price.toNumber(),
             timestamp: new Date(),
           },
           { upsert: true, new: true },

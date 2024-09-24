@@ -8,12 +8,17 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { IndexerAlephiumService } from './indexer-alephium.service';
 import { UserService } from 'src/users/users.service';
 import { RequestWithUser } from 'src/users/interfaces/user.interface';
 import { GetPricesDto } from './dto/get-prices.dto';
+import { JwtAuthGuard } from 'src/guards/jwt-guard.guard';
+import { RolesGuard } from 'src/guards/roles-guard.guard';
+import { PublicAccess } from 'src/decorators/public.decorator';
 
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('indexer-alephium')
 export class IndexerAlephiumController {
   constructor(
@@ -22,7 +27,15 @@ export class IndexerAlephiumController {
   ) {}
 
   @Get('my-balance')
-  async getMyBalance(@Query('address') address: string) {
+  async getMyBalance(@Req() req: RequestWithUser) {
+    const address = req.user['address'];
+
+    return this.indexerAlephiumService.getMyBalance(address);
+  }
+
+  @PublicAccess()
+  @Get('my-balance-test')
+  async getMyBalanceTEST(@Query('address') address: string) {
     return this.indexerAlephiumService.getMyBalance(address);
   }
 
@@ -52,6 +65,7 @@ export class IndexerAlephiumController {
     }
   }
 
+  @PublicAccess()
   @Get('get-popular-coins-info')
   async getMostPopularCoinsInfo() {
     const assets = ['Alephium', 'Ayin', 'Bitcoin', 'Alphpad', 'Ethereum'];

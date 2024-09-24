@@ -6,9 +6,9 @@ import { CredentialsDto, GenerateNonceDto } from './dto/register-auth.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('nonce')
+  @Post('sign')
   async generateNonce(@Body() generateNonceDto: GenerateNonceDto) {
-    return this.authService.generateNonce(generateNonceDto);
+    return this.authService.generateJWT(generateNonceDto);
   }
 
   @Post('credentials')

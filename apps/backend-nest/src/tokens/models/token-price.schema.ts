@@ -7,6 +7,9 @@ export class TokenPrice extends Document {
   tokenAddress: string;
 
   @Prop({ required: true })
+  priceInUSDT: number;
+
+  @Prop({ required: true })
   priceInAlph: number;
 
   @Prop({ required: true })

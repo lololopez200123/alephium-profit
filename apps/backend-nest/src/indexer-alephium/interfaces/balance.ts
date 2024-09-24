@@ -6,6 +6,7 @@ export interface BalanceResponse {
   totalAmount: number;
   tokens: TokenDetails[];
   totalHistory: BalanceHistoryEntry[];
+  totalFavouriteHistory: BalanceFavouriteHistoryEntry[];
 }
 
 export interface TokenBalance {
@@ -15,6 +16,12 @@ export interface TokenBalance {
 }
 
 export interface BalanceHistoryEntry {
+  address: string;
+  timestamp: number;
+  totalAmount: number;
+}
+
+export interface BalanceFavouriteHistoryEntry {
   address: string;
   timestamp: number;
   totalAmount: number;

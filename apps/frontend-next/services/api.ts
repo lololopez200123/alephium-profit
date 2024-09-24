@@ -1,42 +1,39 @@
 // apiService.ts
 import { API_ENDPOINTS } from './endpoints';
 
-export async function generateNonce(address: string) {
+export async function generateSign(address: string, publicKey: string) {
   try {
-    const res = await fetch(API_ENDPOINTS.auth.generateNonce, {
+    const res = await fetch(API_ENDPOINTS.auth.generateSign, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ address }),
+      body: JSON.stringify({ address, publicKey }),
     });
 
-    if (!res.ok) throw new Error('Failed to generate nonce');
+    if (!res.ok) throw new Error('Failed to generate sign');
 
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error('Error generating nonce:', error);
+    console.error('Error generating sign:', error);
     throw error;
   }
 }
 
-export async function getCredentials(address: string, signature: string) {
+export async function getMyInfo() {
   try {
-    const res = await fetch(API_ENDPOINTS.auth.getCredentials, {
-      method: 'POST',
+    const res = await fetch(API_ENDPOINTS.users.getMyInfo, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ address, signature }),
     });
-
-    if (!res.ok) throw new Error('Failed to validate credentials');
-
+    if (!res.ok) throw new Error('Failed to get my info');
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error('Error getting credentials:', error);
+    console.error('Error getting myInfo:', error);
     throw error;
   }
 }

@@ -34,7 +34,7 @@ function NavTop() {
       sx={{
         width: "100%",
         position: "absolute",
-        zIndex: 999,
+        zIndex: 2,
         height: "auto",
         top: 0,
         paddingY: "7px",
@@ -42,7 +42,8 @@ function NavTop() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "rgba(11, 20, 38, 1)",
+        backgroundColor: "rgba(11, 20, 38, 0.8)",
+        backdropFilter: "blur(10px)",
       }}
     >
       <Box
@@ -78,9 +79,7 @@ function NavTop() {
             justifyContent: "center",
           }}
         >
-          {isHome ? (
-            <ButtonConnectWallet />
-          ) : (
+          {!isHome ? (
             <Box
               sx={{
                 width: " 226px",
@@ -90,6 +89,8 @@ function NavTop() {
                 borderRadius: "19px",
               }}
             ></Box>
+          ) : (
+            <ButtonConnectWallet />
           )}
         </Box>
         <Box

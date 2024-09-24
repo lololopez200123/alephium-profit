@@ -12,6 +12,7 @@
     "@alephium/web3-react": "^1.7.3",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@fontsource/poppins": "^5.1.0",
     "@mui/material": "^6.1.0",
     "@mui/x-charts": "^7.17.0",
     "@types/node": "^20",

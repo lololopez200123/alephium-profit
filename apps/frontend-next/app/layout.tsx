@@ -3,6 +3,7 @@ import './globals.css';
 import NavBottom from '@/components/NavBottom';
 import NavTop from '@/components/NavTop';
 import { AlephiumWalletProvider } from '@alephium/web3-react';
+import { Provider as StoreProvider } from 'jotai';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -18,9 +19,11 @@ export default function RootLayout({
     <html lang="en">
       <body className="container">
         <AlephiumWalletProvider network="mainnet">
-          <NavTop />
-          {children}
-          <NavBottom />
+          <StoreProvider>
+            <NavTop />
+            {children}
+            <NavBottom />
+          </StoreProvider>
         </AlephiumWalletProvider>
       </body>
     </html>

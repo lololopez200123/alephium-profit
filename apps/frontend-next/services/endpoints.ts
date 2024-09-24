@@ -1,5 +1,6 @@
 // endpoints.ts
-const BASE_URL = 'https://backend-3grl.onrender.com';
+// const BASE_URL = 'https://backend-3grl.onrender.com';
+const BASE_URL = 'http://localhost:3002';
 
 export const API_ENDPOINTS = {
   auth: {
@@ -7,14 +8,13 @@ export const API_ENDPOINTS = {
     getCredentials: `${BASE_URL}/auth/credentials`,
   },
   users: {
-    getMyInfo: `${BASE_URL}/user/my-info`,
+    getMyInfo: `${BASE_URL}/users/my-info`,
     addFavoriteCoin: `${BASE_URL}/users/favorite-coin`,
     deleteFavoriteCoin: `${BASE_URL}/users/favorite-coin`,
     getFavoriteCoins: `${BASE_URL}/users/favorite-coins`,
   },
   indexerAlephium: {
-    getMyBalance: (address: string) => `${BASE_URL}/indexer-alephium/my-balance-test?address=${address}`,
-    getCryptoInfo: (coin: string) => `${BASE_URL}/indexer-alephium/get-crypto-info?coin=${coin}`,
+    getMyBalance: `${BASE_URL}/indexer-alephium/my-balance`,
     getPopularCoinsInfo: `${BASE_URL}/indexer-alephium/get-popular-coins-info`,
     getFavoriteCoinsInfo: `${BASE_URL}/indexer-alephium/favorite-coins-info`,
     getMarketInfoBatch: `${BASE_URL}/indexer-alephium/get-crypto-info-batch`,

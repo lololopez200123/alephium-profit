@@ -27,6 +27,7 @@ export async function getMyInfo() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
       },
     });
     if (!res.ok) throw new Error('Failed to get my info');
@@ -44,6 +45,7 @@ export async function addFavoriteCoin(coin: string) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
       },
       body: JSON.stringify({ coin }),
     });
@@ -64,6 +66,7 @@ export async function deleteFavoriteCoin(coin: string) {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
       },
       body: JSON.stringify({ coin }),
     });
@@ -99,12 +102,13 @@ export async function getFavoriteCoins() {
 
 // Indexer Alephium API functions
 
-export async function getMyBalance(address: string) {
+export async function getMyBalance() {
   try {
-    const res = await fetch(API_ENDPOINTS.indexerAlephium.getMyBalance(address), {
+    const res = await fetch(API_ENDPOINTS.indexerAlephium.getMyBalance, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
       },
     });
 
@@ -114,25 +118,6 @@ export async function getMyBalance(address: string) {
     return data;
   } catch (error) {
     console.error('Error retrieving balance:', error);
-    throw error;
-  }
-}
-
-export async function getCryptoInfo(coin: string) {
-  try {
-    const res = await fetch(API_ENDPOINTS.indexerAlephium.getCryptoInfo(coin), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) throw new Error('Failed to retrieve crypto info');
-
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error('Error retrieving crypto info:', error);
     throw error;
   }
 }
@@ -153,26 +138,6 @@ export async function getPopularCoinsInfo() {
     return data;
   } catch (error) {
     console.error('Error retrieving popular coins info:', error);
-    throw error;
-  }
-}
-
-export async function getFavoriteCoinsInfo() {
-  try {
-    const res = await fetch(API_ENDPOINTS.indexerAlephium.getFavoriteCoinsInfo, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include', // Assuming authentication via cookies/session
-    });
-
-    if (!res.ok) throw new Error('Failed to retrieve favorite coins info');
-
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error('Error retrieving favorite coins info:', error);
     throw error;
   }
 }

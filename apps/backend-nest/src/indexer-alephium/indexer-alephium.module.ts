@@ -5,6 +5,8 @@ import { HttpModule } from '@nestjs/axios';
 import {
   BalanceHistory,
   BalanceHistorySchema,
+  FavouriteHistory,
+  FavouriteHistorySchema,
 } from './model/indexer-alephium.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/users/models/user.model';
@@ -16,14 +18,16 @@ import { TokensModule } from 'src/tokens/tokens.module';
   imports: [
     HttpModule,
     UsersModule,
+    TokensModule,
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: BalanceHistory.name, schema: BalanceHistorySchema },
+      { name: FavouriteHistory.name, schema: FavouriteHistorySchema },
     ]),
     ScheduleModule.forRoot(),
-    TokensModule,
   ],
   controllers: [IndexerAlephiumController],
   providers: [IndexerAlephiumService],
+  exports: [IndexerAlephiumService],
 })
 export class IndexerAlephiumModule {}

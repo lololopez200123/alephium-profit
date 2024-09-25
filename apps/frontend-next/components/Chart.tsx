@@ -43,8 +43,8 @@ function Chart({ data }: ChartProps) {
         <svg width="0" height="0">
           <defs>
             <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style={{ stopColor: '#6942E2', stopOpacity: 1 }} />
-              <stop offset="100%" style={{ stopColor: '#28E7C5', stopOpacity: 1 }} />
+              <stop offset="0%" stopColor="#6942E2" stopOpacity="1" />
+              <stop offset="100%" stopColor="#28E7C5" stopOpacity="1" />
             </linearGradient>
             {/* Gradiente para el área */}
             <linearGradient id="areaGradient" x1="0%" y1="100%" x2="0%" y2="0%">
@@ -52,14 +52,14 @@ function Chart({ data }: ChartProps) {
               <stop offset="100%" stopColor="rgba(40, 231, 197, .4)" />
             </linearGradient>
             <linearGradient id="paint0_linear_285_258" x1="375" y1="-0.5" x2="4.37114e-08" y2="-0.500033" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#28E7C5" />
-              <stop offset="1" stop-color="#6942E2" />
+              <stop stopColor="#28E7C5" />
+              <stop offset="1" stopColor="#6942E2" />
             </linearGradient>
           </defs>
         </svg>
 
         <LineChart yAxis={[{ max: maxN, min: minN }]} axisHighlight={{ x: 'none', y: 'none' }} series={pData} />
-        <line x1="0" y1="50" x2="300" y2="50" stroke="url(#gradient)" stroke-width="5" />
+        <line x1="0" y1="50" x2="300" y2="50" stroke="url(#gradient)" strokeWidth="5" />
       </Box>
     </>
   );

@@ -11,6 +11,15 @@ import { userAtom } from '@/store/userAtom';
 import { generateSign, getMyBalance, getMyInfo } from '@/services/api';
 import { userBalanceAtom } from '@/store/userBalanceAtom';
 
+interface Token {
+  name: string;
+  amount: number;
+  amountOnAlph: number;
+  logo: string;
+  percent: number;
+  isFavourite: boolean;
+}
+
 function NavTop() {
   const pathname = usePathname();
   const { connectionStatus, account } = useWallet();
@@ -32,7 +41,19 @@ function NavTop() {
       });
 
       getMyBalance().then((data) => {
-        setBalance(data);
+        const tokens = data.tokens
+          .map((coin: Token) => {
+            return {
+              ...coin,
+              name: coin.name.toLocaleUpperCase(),
+              percent: parseFloat(coin.percent.toFixed(0)),
+              amount: parseFloat(coin.amount.toFixed(2)),
+              amountOnAlph: parseFloat(coin.amountOnAlph.toFixed(4)),
+            };
+          })
+          .sort((a: Token, b: Token) => b.percent - a.percent);
+
+        setBalance({ ...data, tokens });
       });
     });
   }, [connectionStatus, account, setUser, setBalance]);

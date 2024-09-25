@@ -1,6 +1,4 @@
-// endpoints.ts
-// const BASE_URL = 'https://backend-3grl.onrender.com';
-const BASE_URL = 'http://localhost:3002';
+const BASE_URL = 'https://backend-3grl.onrender.com';
 
 export const API_ENDPOINTS = {
   auth: {

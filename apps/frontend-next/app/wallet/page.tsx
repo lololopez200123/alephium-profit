@@ -1,23 +1,27 @@
 'use client';
 import { Box, CircularProgress, Typography, Button } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Chart from '@/components/Chart';
 import { userBalanceAtom } from '@/store/userBalanceAtom';
 import { useAtom } from 'jotai';
+import { addFavoriteCoin, deleteFavoriteCoin } from '@/services/api';
 
 function Wallet() {
   const [balance, setBalance] = useAtom(userBalanceAtom);
-  console.log(balance);
+  const [tokensIndex, setTokensIndex] = useState<number[]>([]);
+  const handleClick = async (index: number) => {
+    if (!balance) return;
 
-  const handleClick = (index: number) => {
-    if (balance) {
-      const newTokens = [...balance.tokens];
-      newTokens[index] = {
-        ...newTokens[index],
-        isFavourite: !newTokens[index].isFavourite,
-      };
-      setBalance({ ...balance, tokens: newTokens });
+    const newTokens = [...balance.tokens];
+    newTokens[index] = {
+      ...newTokens[index],
+      isFavourite: !newTokens[index].isFavourite,
+    };
+    setBalance({ ...balance, tokens: newTokens });
+
+    if (!tokensIndex.includes(index)) {
+      setTokensIndex((prev) => [...prev, index]);
     }
   };
   const selectedTime = ['1D', '1W', '1M', '1Y'];
@@ -26,8 +30,22 @@ function Wallet() {
     setTime(time);
   };
 
+  useEffect(() => {
+    tokensIndex.forEach((item) => {
+      if (balance?.tokens[item]?.isFavourite) {
+        addFavoriteCoin(balance.tokens[item].name);
+        setTokensIndex([]);
+      } else {
+        if (balance) {
+          deleteFavoriteCoin(balance.tokens[item].name);
+          setTokensIndex([]);
+        }
+      }
+    });
+  }, [tokensIndex, balance]);
+
   const dataGraph = [...(balance?.totalHistory.map((item) => item.totalAmount) || [0, 0]), balance?.totalAmount ?? 0];
-  useEffect;
+
   return (
     <Box
       sx={{
@@ -182,7 +200,7 @@ function Wallet() {
                   }}
                 >
                   <Typography variant="subtitle2" fontSize="0.725rem" key={coin.name}>
-                    {coin.name}
+                    {coin.name.toLocaleUpperCase()}
                   </Typography>
                   <Typography variant="h6" key={coin.amount}>
                     {coin.amount}

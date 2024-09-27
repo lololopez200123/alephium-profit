@@ -29,11 +29,11 @@ async function Home() {
     <Box
       sx={{
         display: 'flex',
-        paddingTop: '20px',
-        paddingBottom: '40px',
+        paddingTop: '1.25rem',
+        paddingBottom: '2.5rem',
         flexDirection: 'column',
         width: '100%',
-        height: '90vh',
+        height: 'calc(100vh - 100px)',
         paddingX: 'clamp(.5rem,4.26%,1rem)',
       }}
     >

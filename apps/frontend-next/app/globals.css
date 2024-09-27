@@ -11,6 +11,9 @@ html {
   align-items: center; /* Centrar verticalmente siempre */
   justify-content: center;
   font-family: 'Poppins', sans-serif;
+  @media (max-height: 450px) {
+    font-size: 10px;
+  }
 }
 
 * {
@@ -33,6 +36,7 @@ p {
   flex-direction: column;
   justify-content: flex-start;
   height: 100dvh;
+  overflow: hidden;
   width: 100%;
   max-width: 450px;
   position: relative;

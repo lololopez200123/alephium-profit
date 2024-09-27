@@ -1,0 +1,19 @@
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-inline: auto;
+  height: 100vh;
+  width: 100%;
+  background-color: #0b1426;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.loadingImage {
+  max-width: 270px;
+  width: 100%;
+  height: auto;
+}

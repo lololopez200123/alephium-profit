@@ -336,7 +336,7 @@ export class IndexerAlephiumService {
     const totalEntries = await this.balanceHistoryModel.countDocuments({
       address,
     });
-    const MAX_ENTRIES = 16;
+    const MAX_ENTRIES = 32;
 
     if (totalEntries > MAX_ENTRIES) {
       const entriesToDelete = await this.balanceHistoryModel
@@ -384,7 +384,7 @@ export class IndexerAlephiumService {
     const totalEntries = await this.balanceHistoryModel.countDocuments({
       address,
     });
-    const MAX_ENTRIES = 128;
+    const MAX_ENTRIES = 256;
 
     if (totalEntries > MAX_ENTRIES) {
       const entriesToDelete = await this.balanceHistoryModel
@@ -446,8 +446,7 @@ export class IndexerAlephiumService {
   ): Promise<BalanceHistoryEntry[]> {
     const historyEntries = await this.balanceHistoryModel
       .find({ address })
-      .sort({ timestamp: 1 })
-      .limit(8)
+      .sort({ timestamp: -1 })
       .exec();
 
     return historyEntries.map((entry) => ({
@@ -462,8 +461,7 @@ export class IndexerAlephiumService {
   ): Promise<BalanceFavouriteHistoryEntry[]> {
     const favouriteHistoryEntries = await this.balanceFavouriteHistoryModel
       .find({ address })
-      .sort({ timestamp: 1 })
-      .limit(8)
+      .sort({ timestamp: -1 })
       .exec();
 
     return favouriteHistoryEntries.map((entry) => ({

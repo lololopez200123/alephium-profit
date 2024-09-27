@@ -112,6 +112,8 @@ export async function getMyBalance() {
       },
     });
 
+    console.log(res);
+
     if (!res.ok) throw new Error('Failed to retrieve balance');
 
     const data = await res.json();
@@ -129,7 +131,6 @@ export async function getPopularCoinsInfo() {
       headers: {
         'Content-Type': 'application/json',
       },
-      cache: 'no-store',
     });
 
     if (!res.ok) throw new Error('Failed to retrieve popular coins info');

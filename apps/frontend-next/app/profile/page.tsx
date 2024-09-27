@@ -63,7 +63,7 @@ function Profile() {
                 paddingTop: "0.3125rem",
               }}
             >
-              Member since | {user?.date ?? "Sep, 30 2024"}
+              Member since | 2024
             </Typography>
           </Box>
         </Box>

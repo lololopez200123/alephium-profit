@@ -3,9 +3,9 @@ import React from "react";
 import { Box, Button, Menu, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-const user = {
-  userName: "Basic Name",
-};
+import { useAtom } from "jotai";
+import { userAtom } from "@/store/userAtom";
+
 const menuBox = {
   display: "flex",
   flexDirection: "column",
@@ -39,11 +39,6 @@ const menuItems = [
     iconSrc: "/profile-menu.svg",
     route: "/profile",
   },
-  {
-    name: "Settings",
-    iconSrc: "/settings-menu.svg",
-    route: "/settings",
-  },
 ];
 
 const lastMenuItem = {
@@ -61,6 +56,8 @@ const BurgerMenu = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const [user, setUser] = useAtom(userAtom);
   return (
     <Box>
       <Button
@@ -120,7 +117,7 @@ const BurgerMenu = () => {
               }}
             >
               <Typography fontSize={"1.25rem"} color="white" variant="h4">
-                {user.userName}
+                {user?.name}
               </Typography>
             </Box>
             <Box
@@ -136,7 +133,7 @@ const BurgerMenu = () => {
             {/* Rendering of menu items*/}
             <Box sx={menuBox}>
               {menuItems.map((item, id) => (
-                <Link key={id} href={"/"}>
+                <Link key={id} href={item.route}>
                   <Box sx={menuItemBox}>
                     <Typography sx={textItem}>{item.name}</Typography>
                     <Box sx={itemIconBox}>

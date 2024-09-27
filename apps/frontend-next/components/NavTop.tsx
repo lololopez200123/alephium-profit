@@ -78,7 +78,7 @@ function NavTop() {
     <Box
       sx={{
         width: "100%",
-        position: "absolute",
+        heigth: "90px",
         zIndex: 2,
         height: "auto",
         top: 0,
@@ -88,7 +88,6 @@ function NavTop() {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "rgba(11, 20, 38, 0.8)",
-        backdropFilter: "blur(10px)",
       }}
     >
       <Box

@@ -58,6 +58,7 @@ function NavBottom() {
         height: "10%",
         maxHeight: "70px",
         width: "100%",
+        maxWidth: "450px",
         bottom: "0",
         left: "0",
         paddingY: "7px",

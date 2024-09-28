@@ -7,6 +7,7 @@ interface ChartProps {
   data: number[]; // Definimos que la prop `data` será un array de números
 }
 
+const FACTOR_MULTIPLIER = 1.5;
 function Chart({ data }: ChartProps) {
   if (!data || data.length === 1) {
     return (
@@ -20,8 +21,9 @@ function Chart({ data }: ChartProps) {
   const arrayData = data;
   const isConstantData = arrayData.every((val) => val === arrayData[0]);
   // maxN and minN is used to set the max and min value of the y axis to avoid the chart from being cut off :D
-  const maxN = (arrayData?.reduce((a, b) => Math.max(a, b)) || 1) * 1.1;
-  const minN = (arrayData?.reduce((a, b) => Math.min(a, b)) || -1) * 1.1 > 0 ? 0 : (arrayData?.reduce((a, b) => Math.min(a, b)) || -1) * 1.1;
+  const maxN = (arrayData?.reduce((a, b) => Math.max(a, b)) || 1) * FACTOR_MULTIPLIER;
+  const minN =
+    (arrayData?.reduce((a, b) => Math.min(a, b)) || -1) * FACTOR_MULTIPLIER > 0 ? 0 : (arrayData?.reduce((a, b) => Math.min(a, b)) || -1) * FACTOR_MULTIPLIER;
   const pData = [{ data: arrayData, area: true, baseline: minN }];
   return (
     <>
@@ -68,7 +70,6 @@ function Chart({ data }: ChartProps) {
         </svg>
 
         <LineChart yAxis={[{ max: maxN, min: minN }]} axisHighlight={{ x: 'none', y: 'none' }} series={pData} />
-        <line x1="0" y1="50" x2="300" y2="50" stroke="url(#gradient)" strokeWidth="5" />
       </Box>
     </>
   );

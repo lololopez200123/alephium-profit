@@ -103,3 +103,14 @@ p {
     box-shadow: 0 2.5em 0 0;
   }
 }
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transition: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  }
+  100% {
+    opacity: 1;
+    transition: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  }
+}

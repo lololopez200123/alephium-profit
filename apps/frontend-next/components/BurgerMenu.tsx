@@ -1,10 +1,10 @@
 'use client';
-import React from 'react';
 import { Box, Button, Modal, Typography } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAtom } from 'jotai';
 import { userAtom } from '@/store/userAtom';
+import { useState } from 'react';
 
 const menuBox = {
   display: 'flex',
@@ -48,26 +48,31 @@ const lastMenuItem = {
 };
 
 const BurgerMenu = () => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [user] = useAtom(userAtom);
-  const open = Boolean(anchorEl);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = () => {
+    setIsOpen(true);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setIsOpen(false);
   };
 
   return (
     <Box>
-      <Button id="basic-button" aria-controls={open ? 'menu' : undefined} aria-haspopup="true" aria-expanded={open ? 'true' : undefined} onClick={handleClick}>
+      <Button
+        id="basic-button"
+        aria-controls={isOpen ? 'menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={isOpen ? 'true' : undefined}
+        onClick={handleClick}
+      >
         <Image alt="menu" width={32} height={32} src="menu.svg" />
       </Button>
       <Modal
         onClose={handleClose}
-        open={open}
+        open={isOpen}
         aria-labelledby="Menu"
         aria-describedby="Burguer Menu"
         sx={{
@@ -128,7 +133,7 @@ const BurgerMenu = () => {
           {/* Rendering of menu items*/}
           <Box sx={menuBox}>
             {menuItems.map((item, id) => (
-              <Link key={id} href={item.route}>
+              <Link key={id} href={item.route} className="menu-item">
                 <Box sx={menuItemBox}>
                   <Typography sx={textItem}>{item.name}</Typography>
                   <Box sx={itemIconBox}>
@@ -140,6 +145,7 @@ const BurgerMenu = () => {
           </Box>
           {/* Separator and last menu item */}
           <Box
+            className="menu-item"
             sx={{
               width: '70%',
               marginTop: 'auto',

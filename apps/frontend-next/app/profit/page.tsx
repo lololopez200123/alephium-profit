@@ -8,18 +8,20 @@ import { TokenDetails } from '../../../backend-nest/src/indexer-alephium/interfa
 import ItemFavourites from '@/components/itemFavourites/ItemFavourites';
 import ModalFavouritesCoin from '@/components/modalFavouritesCoin/modalFavouritesCoin';
 import formatPNLvalue from '@/utils/formatPnl';
+import Fuse from 'fuse.js';
+import { searchTermAtom } from '@/store/searchAtom';
 
 const selectedTime = ['1D', '1W', '1M', '1Y'];
 
 type TokenDetailsWithPNL = TokenDetails & {
-  pnl?: number;
+  pnl: number;
 };
 
 function ProfitCharts() {
   const [balance] = useAtom(userBalanceAtom);
   const coin = useMemo(() => balance?.tokens?.filter((token) => token.isFavourite === true) || [], [balance]);
   const [time, setTime] = useState<string | null>(null);
-  const [selectCoin, setSelectCoin] = useState<TokenDetailsWithPNL | null>(coin[0] ?? null);
+  const [searchTerm] = useAtom(searchTermAtom);
 
   const calculatePNL = useCallback(
     (token: TokenDetails): number => {
@@ -50,12 +52,14 @@ function ProfitCharts() {
   );
 
   // Agregar PNL a cada token favorito
-  const coinWithPNL = useMemo(() => {
+  const coinWithPNL: TokenDetailsWithPNL[] = useMemo(() => {
     return coin.map((token) => ({
       ...token,
       pnl: calculatePNL(token),
     }));
   }, [coin, calculatePNL]);
+
+  const [selectCoin, setSelectCoin] = useState<TokenDetailsWithPNL | null>(coinWithPNL[0] ?? null);
 
   // Graph
   const dataGraph = useMemo(() => {
@@ -89,7 +93,7 @@ function ProfitCharts() {
     } else {
       setSelectCoin(null);
     }
-  }, [coin, selectCoin]);
+  }, [coin, coinWithPNL, selectCoin]);
 
   //Select time
   const handleSelectionTime = (time: string) => {
@@ -97,9 +101,23 @@ function ProfitCharts() {
   };
 
   //Select coin
-  const handleSelectCoin = (item: TokenDetails) => {
+  const handleSelectCoin = (item: TokenDetailsWithPNL) => {
     setSelectCoin(item);
   };
+
+  const fuse = useMemo(() => {
+    if (!coinWithPNL) return null;
+    return new Fuse(coinWithPNL, {
+      keys: ['name'],
+      threshold: 0.3,
+    });
+  }, [coinWithPNL]);
+
+  const filteredTokens = useMemo(() => {
+    if (!fuse || !searchTerm) return coinWithPNL || [];
+    const results = fuse.search(searchTerm);
+    return results.map((result) => result.item);
+  }, [fuse, searchTerm, coinWithPNL]);
 
   return (
     <Box
@@ -228,7 +246,7 @@ function ProfitCharts() {
         {/*Favorite Coins */}
         <Box sx={{ overflowY: 'auto', paddingBottom: '4rem' }}>
           <Box sx={{ height: '100%' }}>
-            {coinWithPNL?.map((item, index) => (
+            {filteredTokens?.map((item, index) => (
               <ItemFavourites key={index} item={item} handleSelectCoin={handleSelectCoin} index={index} isSelected={selectCoin?.name === item.name} />
             ))}
           </Box>

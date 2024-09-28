@@ -9,7 +9,7 @@ type TokenDetailsWithPNL = TokenDetails & {
 
 type Props = {
   index: number;
-  handleSelectCoin: (coin: TokenDetails) => void;
+  handleSelectCoin: (coin: TokenDetailsWithPNL) => void;
   item: TokenDetailsWithPNL;
   isSelected: boolean;
 };

@@ -8,11 +8,12 @@ interface ChartProps {
 }
 
 function Chart({ data }: ChartProps) {
-  console.log(data);
   if (!data || data.length === 1) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-        <Typography textAlign={'center'} color={'rgba(40, 231, 197, .4)'}>Not enough information <br/> to show the graph.</Typography>
+        <Typography textAlign={'center'} color={'rgba(40, 231, 197, .4)'}>
+          Not enough information <br /> to show the graph.
+        </Typography>
       </Box>
     );
   }

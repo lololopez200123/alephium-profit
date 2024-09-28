@@ -7,12 +7,15 @@ import { useAtom } from 'jotai';
 import { addFavoriteCoin, deleteFavoriteCoin } from '@/services/api';
 import ItemWallet from '@/components/itemWallet/ItemWallet';
 import { BalanceResponse } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
+import { searchTermAtom } from '@/store/searchAtom';
+import Fuse from 'fuse.js';
 
 const selectedTime = ['1D', '1W', '1M', '1Y'];
 
 function Wallet() {
   const [balance, setBalance] = useAtom<BalanceResponse | null>(userBalanceAtom);
   const [time, setTime] = useState<string | null>(null);
+  const [searchTerm] = useAtom(searchTermAtom);
 
   const handleClick = async (index: number) => {
     if (!balance) return;
@@ -43,6 +46,21 @@ function Wallet() {
     return [...(balance?.totalHistory.sort((a, b) => a.timestamp - b.timestamp).map((item) => item.totalAmount) || [0, 0]), balance?.totalAmount ?? 0];
   }, [balance]);
 
+  const fuse = useMemo(() => {
+    if (!balance?.tokens) return null;
+    return new Fuse(balance.tokens, {
+      keys: ['name'], // Campos por los que se buscará
+      threshold: 0.3, // Ajusta la sensibilidad de la búsqueda
+    });
+  }, [balance]);
+
+  // Filtrado de tokens basado en el término de búsqueda
+  const filteredTokens = useMemo(() => {
+    if (!fuse || !searchTerm) return balance?.tokens || [];
+    const results = fuse.search(searchTerm);
+    return results.map((result) => result.item);
+  }, [fuse, searchTerm, balance]);
+
   return (
     <Box
       sx={{
@@ -50,7 +68,7 @@ function Wallet() {
         paddingBlock: '1.25rem',
         flexDirection: 'column',
         width: '100%',
-        height: '100%',
+        height: 'calc(100vh - 100px)',
         paddingX: '1rem',
         overflowX: 'hidden',
       }}
@@ -154,7 +172,7 @@ function Wallet() {
             paddingBottom: '4rem',
           }}
         >
-          {balance?.tokens?.map((coin, index) => {
+          {filteredTokens?.map((coin, index) => {
             return <ItemWallet coin={coin} handleClick={handleClick} key={coin.name + `-${index}`} index={index} />;
           })}
         </Box>

@@ -40,7 +40,7 @@ const ItemFavourites = ({ index, handleSelectCoin, item }: Props) => {
         </Box>
         <Typography
           variant="subtitle2"
-          sx={{ textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '20ch' }}
+          sx={{ textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '15ch' }}
         >
           {item.name}
         </Typography>

@@ -6,9 +6,10 @@ type Props = {
   index: number;
   handleSelectCoin: (coin: TokenDetails) => void;
   item: TokenDetails;
+  isSelected: boolean;
 };
 
-const ItemFavourites = ({ index, handleSelectCoin, item }: Props) => {
+const ItemFavourites = ({ index, handleSelectCoin, item, isSelected }: Props) => {
   return (
     <Box
       key={index}
@@ -19,7 +20,8 @@ const ItemFavourites = ({ index, handleSelectCoin, item }: Props) => {
         borderRadius: '10px',
         height: '48px',
         marginBlock: '.5rem',
-        background: `linear-gradient(180deg, rgba(255, 255, 255, 0.15) -142.19%, rgba(11, 20, 38, 0.15) 214.06%)`,
+        background: isSelected ? 'rgba(40, 231, 197, 0.15)' : 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) -142.19%, rgba(11, 20, 38, 0.15) 214.06%)',
+        border: isSelected ? '0.5px solid rgba(40, 231, 197, 1)' : 'none',
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -34,9 +36,10 @@ const ItemFavourites = ({ index, handleSelectCoin, item }: Props) => {
             borderRadius: '30px',
             margin: '0.8rem',
             marginInline: '1.25rem',
+            overflow: 'hidden',
           }}
         >
-          <Image width="16" height="16" alt={item.name} src={item.logo} />
+          <Image width="25" height="25" alt="1" src={item.logo} />
         </Box>
         <Typography
           variant="subtitle2"

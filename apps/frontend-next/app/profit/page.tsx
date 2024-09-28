@@ -3,46 +3,27 @@ import Chart from '@/components/Chart';
 import { Box, Button, Typography } from '@mui/material';
 import { userBalanceAtom } from '@/store/userBalanceAtom';
 import { useAtom } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { TokenDetails } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
 import ItemFavourites from '@/components/itemFavourites/ItemFavourites';
 import ModalFavouritesCoin from '@/components/modalFavouritesCoin/modalFavouritesCoin';
-
-const FIRST_COIN: TokenDetails = {
-  name: '',
-  amount: 0,
-  amountOnAlph: 0,
-  logo: '',
-  percent: 0,
-  isFavourite: false,
-};
 
 const selectedTime = ['1D', '1W', '1M', '1Y'];
 
 function ProfitCharts() {
   const [balance] = useAtom(userBalanceAtom);
-  const [time, setTime] = useState<string | null>(null);
-  const [selectCoin, setSelectCoin] = useState<TokenDetails | null>(FIRST_COIN);
-  //coins favourite
   const coin = balance?.tokens?.filter((token) => token.isFavourite === true) || [];
+  const [time, setTime] = useState<string | null>(null);
+  const [selectCoin, setSelectCoin] = useState<TokenDetails | null>(coin[0] ?? null);
 
   //Graph
   const dataGraph = [...(balance?.totalFavouriteHistory.map((item) => item.totalAmount) || [0, 0]), balance?.totalAmount ?? 0];
-
-  //Modal
-  const [showModal, setShowModal] = useState(false);
-  useEffect(() => {
-    if (balance?.tokens && coin.length === 0) {
-      setShowModal(true);
-    } else {
-      setShowModal(false);
-    }
-  }, [balance, coin]);
 
   //Select time
   const handleSelectionTime = (time: string) => {
     setTime(time);
   };
+
   //Select coin
   const handleSelectCoin = (item: TokenDetails) => {
     setSelectCoin(item);
@@ -60,7 +41,7 @@ function ProfitCharts() {
         overflowX: 'hidden',
       }}
     >
-      {showModal && <ModalFavouritesCoin />}
+      {balance?.tokens && coin.length === 0 && <ModalFavouritesCoin />}
       <Box
         sx={{
           height: '45%',
@@ -101,7 +82,7 @@ function ProfitCharts() {
               paddingLeft: '1%',
             }}
           >
-            Yesterday pnl
+            pnl
           </Typography>
         </Box>
         <Box sx={{ height: '100%', marginTop: '3rem' }}>
@@ -162,7 +143,6 @@ function ProfitCharts() {
           minHeight: '15.625rem',
         }}
       >
-        {' '}
         <Typography
           sx={{
             marginBlock: '0.3125rem',
@@ -177,7 +157,7 @@ function ProfitCharts() {
         <Box sx={{ overflowY: 'auto', paddingBottom: '4rem' }}>
           <Box sx={{ height: '100%' }}>
             {coin?.map((item, index) => (
-              <ItemFavourites key={index} item={item} handleSelectCoin={handleSelectCoin} index={index} />
+              <ItemFavourites key={index} item={item} handleSelectCoin={handleSelectCoin} index={index} isSelected={selectCoin?.name === item.name} />
             ))}
           </Box>
         </Box>

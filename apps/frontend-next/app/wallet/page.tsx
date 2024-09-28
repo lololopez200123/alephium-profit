@@ -1,31 +1,37 @@
 'use client';
 import { Box, Typography, Button } from '@mui/material';
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import Chart from '@/components/Chart';
 import { userBalanceAtom } from '@/store/userBalanceAtom';
 import { useAtom } from 'jotai';
 import { addFavoriteCoin, deleteFavoriteCoin } from '@/services/api';
 import ItemWallet from '@/components/itemWallet/ItemWallet';
+import { BalanceResponse } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
 
 const selectedTime = ['1D', '1W', '1M', '1Y'];
 
 function Wallet() {
-  const [balance, setBalance] = useAtom(userBalanceAtom);
-  const [tokensIndex, setTokensIndex] = useState<number[]>([]);
+  const [balance, setBalance] = useAtom<BalanceResponse | null>(userBalanceAtom);
   const [time, setTime] = useState<string | null>(null);
 
   const handleClick = async (index: number) => {
     if (!balance) return;
 
-    const newTokens = [...balance.tokens];
-    newTokens[index] = {
-      ...newTokens[index],
-      isFavourite: !newTokens[index].isFavourite,
-    };
-    setBalance({ ...balance, tokens: newTokens });
+    const updatedTokens = balance.tokens.map((token, i) => (i === index ? { ...token, isFavourite: !token.isFavourite } : token));
+    setBalance({ ...balance, tokens: updatedTokens });
 
-    if (!tokensIndex.includes(index)) {
-      setTokensIndex((prev) => [...prev, index]);
+    try {
+      const selectedToken = updatedTokens[index];
+      if (selectedToken.isFavourite) {
+        await addFavoriteCoin(selectedToken.name);
+      } else {
+        await deleteFavoriteCoin(selectedToken.name);
+      }
+    } catch (error) {
+      console.error('Error updating favorite coin:', error);
+      // Opcional: revertir el cambio de estado en caso de error
+      const revertedTokens = balance.tokens.map((token, i) => (i === index ? { ...token, isFavourite: balance.tokens[i].isFavourite } : token));
+      setBalance({ ...balance, tokens: revertedTokens });
     }
   };
 
@@ -33,22 +39,10 @@ function Wallet() {
     setTime(time);
   };
 
-  useEffect(() => {
-    // TODO: revisar esto, por que hace un efecto y no directamente setea al hacer click, efecto innecesario
-    tokensIndex.forEach((item) => {
-      if (balance?.tokens[item]?.isFavourite) {
-        addFavoriteCoin(balance.tokens[item].name);
-        setTokensIndex([]);
-      } else {
-        if (balance) {
-          deleteFavoriteCoin(balance.tokens[item].name);
-          setTokensIndex([]);
-        }
-      }
-    });
-  }, [tokensIndex, balance]);
+  const dataGraph = useMemo(() => {
+    return [...(balance?.totalHistory.sort((a, b) => a.timestamp - b.timestamp).map((item) => item.totalAmount) || [0, 0]), balance?.totalAmount ?? 0];
+  }, [balance]);
 
-  const dataGraph = [...(balance?.totalHistory.map((item) => item.totalAmount) || [0, 0]), balance?.totalAmount ?? 0];
   return (
     <Box
       sx={{
@@ -141,7 +135,7 @@ function Wallet() {
         </Box>
       </Box>
 
-      <Box sx={{ height: '50%' }}>
+      <Box sx={{ height: '50%', paddingBottom: '4rem' }}>
         <Typography
           sx={{
             marginBlock: '0.3125rem',
@@ -161,7 +155,7 @@ function Wallet() {
           }}
         >
           {balance?.tokens?.map((coin, index) => {
-            return <ItemWallet coin={coin} handleClick={handleClick} key={index} index={index} />;
+            return <ItemWallet coin={coin} handleClick={handleClick} key={coin.name + `-${index}`} index={index} />;
           })}
         </Box>
       </Box>

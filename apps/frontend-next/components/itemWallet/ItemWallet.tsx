@@ -62,6 +62,7 @@ const ItemWallet = ({ coin, index, handleClick }: Props) => {
             height: '20px',
             borderRadius: '30px',
             minWidth: '20px',
+            cursor: 'pointer',
           }}
         >
           <Image width="18" height="18" alt={coin.logo} src={coin.isFavourite ? '/star-selected.svg' : '/star.svg'}></Image>
@@ -137,7 +138,7 @@ const ItemWallet = ({ coin, index, handleClick }: Props) => {
           size={64}
           thickness={7}
           variant="determinate"
-          value={coin.percent}
+          value={coin.percent === 0 ? 0.1 : coin.percent}
         />
       </Box>
     </Box>

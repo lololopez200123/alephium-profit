@@ -1,21 +1,29 @@
 import Image from 'next/image';
 import { TokenDetails } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
 import { Box, Typography } from '@mui/material';
+import formatPNLvalue from '@/utils/formatPnl';
+
+type TokenDetailsWithPNL = TokenDetails & {
+  pnl: number;
+};
 
 type Props = {
   index: number;
   handleSelectCoin: (coin: TokenDetails) => void;
-  item: TokenDetails;
+  item: TokenDetailsWithPNL;
   isSelected: boolean;
 };
 
 const ItemFavourites = ({ index, handleSelectCoin, item, isSelected }: Props) => {
+  const formattedPNL = formatPNLvalue(item.pnl);
+
   return (
     <Box
       key={index}
       onClick={() => handleSelectCoin(item)}
       sx={{
         display: 'flex',
+        cursor: 'pointer',
         justifyContent: 'space-between',
         borderRadius: '10px',
         height: '48px',
@@ -52,10 +60,10 @@ const ItemFavourites = ({ index, handleSelectCoin, item, isSelected }: Props) =>
           sx={{
             paddingLeft: '.9rem',
             fontSize: '0.625rem',
-            color: item?.percent <= 0 ? 'rgba(226, 66, 66, 1)' : 'rgba(40, 231, 197, 1)',
+            color: item?.pnl <= 0 ? 'rgba(226, 66, 66, 1)' : 'rgba(40, 231, 197, 1)',
           }}
         >
-          {item.percent} %
+          {formattedPNL}
         </Typography>
       </Box>
       {/* Data section */}
@@ -70,7 +78,7 @@ const ItemFavourites = ({ index, handleSelectCoin, item, isSelected }: Props) =>
         }}
       >
         <Typography variant="subtitle1">{item.amount}</Typography>
-        <Typography fontSize="0.625rem" variant="caption">
+        <Typography fontSize="0.625rem" variant="caption" color={'rgba(40, 231, 197, 1)'}>
           {item.amountOnAlph} ALPH
         </Typography>
       </Box>

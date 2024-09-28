@@ -3,21 +3,93 @@ import Chart from '@/components/Chart';
 import { Box, Button, Typography } from '@mui/material';
 import { userBalanceAtom } from '@/store/userBalanceAtom';
 import { useAtom } from 'jotai';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TokenDetails } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
 import ItemFavourites from '@/components/itemFavourites/ItemFavourites';
 import ModalFavouritesCoin from '@/components/modalFavouritesCoin/modalFavouritesCoin';
+import formatPNLvalue from '@/utils/formatPnl';
 
 const selectedTime = ['1D', '1W', '1M', '1Y'];
 
+type TokenDetailsWithPNL = TokenDetails & {
+  pnl?: number;
+};
+
 function ProfitCharts() {
   const [balance] = useAtom(userBalanceAtom);
-  const coin = balance?.tokens?.filter((token) => token.isFavourite === true) || [];
+  const coin = useMemo(() => balance?.tokens?.filter((token) => token.isFavourite === true) || [], [balance]);
   const [time, setTime] = useState<string | null>(null);
-  const [selectCoin, setSelectCoin] = useState<TokenDetails | null>(coin[0] ?? null);
+  const [selectCoin, setSelectCoin] = useState<TokenDetailsWithPNL | null>(coin[0] ?? null);
 
-  //Graph
-  const dataGraph = [...(balance?.totalFavouriteHistory.map((item) => item.totalAmount) || [0, 0]), balance?.totalAmount ?? 0];
+  const calculatePNL = useCallback(
+    (token: TokenDetails): number => {
+      if (!balance?.totalFavouriteHistory || balance.totalFavouriteHistory.length === 0) {
+        return 0;
+      }
+
+      // Ordenar el historial por timestamp ascendente
+      const sortedHistory = [...balance.totalFavouriteHistory].sort((a, b) => a.timestamp - b.timestamp);
+
+      // Obtener el historial inicial y actual
+      const initialHistory = sortedHistory[0];
+      const currentHistory = sortedHistory[sortedHistory.length - 1];
+
+      // Encontrar los datos del token en los históricos
+      const initialToken = initialHistory.tokens.find((t) => t.name === token.name);
+      const currentToken = currentHistory.tokens.find((t) => t.name === token.name);
+
+      const initialAmount = initialToken ? initialToken.amountOnAlph : 0;
+      const currentAmount = currentToken ? currentToken.amountOnAlph : 0;
+
+      // Calcular el PNL
+      const pnl = currentAmount - initialAmount;
+
+      return pnl;
+    },
+    [balance?.totalFavouriteHistory]
+  );
+
+  // Agregar PNL a cada token favorito
+  const coinWithPNL = useMemo(() => {
+    return coin.map((token) => ({
+      ...token,
+      pnl: calculatePNL(token),
+    }));
+  }, [coin, calculatePNL]);
+
+  // Graph
+  const dataGraph = useMemo(() => {
+    if (!selectCoin || !balance?.totalFavouriteHistory) {
+      return [0];
+    }
+
+    const filteredHistory = balance.totalFavouriteHistory
+      .map((history) => {
+        const tokenData = history.tokens.find((token) => token.name === selectCoin.name);
+        return {
+          timestamp: history.timestamp,
+          amountOnAlph: tokenData ? tokenData.amountOnAlph : 0,
+        };
+      })
+      .filter((data) => data.amountOnAlph > 0);
+
+    const sortedHistory = filteredHistory.sort((a, b) => a.timestamp - b.timestamp);
+
+    const amounts = sortedHistory.map((data) => data.amountOnAlph);
+
+    return amounts.length > 0 ? amounts : [0];
+  }, [balance, selectCoin]);
+
+  useEffect(() => {
+    if (coin.length > 0) {
+      // If the selected currency is no longer in favorites, select the first available
+      if (!coin.find((c) => c.name === selectCoin?.name)) {
+        setSelectCoin(coinWithPNL[0]);
+      }
+    } else {
+      setSelectCoin(null);
+    }
+  }, [coin, selectCoin]);
 
   //Select time
   const handleSelectionTime = (time: string) => {
@@ -70,10 +142,10 @@ function ProfitCharts() {
               sx={{
                 fontSize: '0.9375rem',
                 paddingLeft: '1%',
-                color: selectCoin?.percent !== undefined && selectCoin?.percent <= 0 ? 'rgba(226, 66, 66, 1)' : 'rgba(40, 231, 197, 1)',
+                color: selectCoin?.pnl !== undefined && selectCoin?.pnl <= 0 ? 'rgba(226, 66, 66, 1)' : 'rgba(40, 231, 197, 1)',
               }}
             >
-              {selectCoin?.percent}
+              {selectCoin?.pnl && formatPNLvalue(selectCoin?.pnl)}
             </Typography>
           </Box>
           <Typography
@@ -82,7 +154,7 @@ function ProfitCharts() {
               paddingLeft: '1%',
             }}
           >
-            pnl
+            Total PNL
           </Typography>
         </Box>
         <Box sx={{ height: '100%', marginTop: '3rem' }}>
@@ -156,7 +228,7 @@ function ProfitCharts() {
         {/*Favorite Coins */}
         <Box sx={{ overflowY: 'auto', paddingBottom: '4rem' }}>
           <Box sx={{ height: '100%' }}>
-            {coin?.map((item, index) => (
+            {coinWithPNL?.map((item, index) => (
               <ItemFavourites key={index} item={item} handleSelectCoin={handleSelectCoin} index={index} isSelected={selectCoin?.name === item.name} />
             ))}
           </Box>

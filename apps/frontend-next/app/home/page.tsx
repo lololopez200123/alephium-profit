@@ -1,7 +1,6 @@
 import { Box } from '@mui/material';
 import React from 'react';
 import { getPopularCoinsInfo } from '@/services/api';
-import Loading from '@/components/loading/Loading';
 import HeroHome from '@/components/Home/heroHome/HeroHome';
 import PopularCoinsList from '@/components/Home/popularCoinsList/PopularCoinsList';
 
@@ -37,7 +36,6 @@ async function Home() {
         paddingX: 'clamp(.5rem,4.26%,1rem)',
       }}
     >
-      <Loading />
       <HeroHome />
       <PopularCoinsList coinData={coinData} />
     </Box>

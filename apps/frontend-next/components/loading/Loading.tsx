@@ -4,6 +4,7 @@ import styles from './Loading.module.css';
 import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { loadingScreenAtom } from '@/store/loadingScreenAtom';
+import { Box } from '@mui/material';
 
 const Loading = () => {
   const [show, setShow] = useAtom(loadingScreenAtom);
@@ -22,9 +23,11 @@ const Loading = () => {
   }
 
   return (
-    <div className={styles.loadingContainer}>
-      <Image src="/init-loading.gif" width={720} height={720} alt="Cargando..." className={styles.loadingImage} />
-    </div>
+    <Box className={styles.loadingContainer}>
+      <Box className={styles.innerLoadingContainer}>
+        <Image unoptimized src="/init-loading.gif" width={720} height={720} alt="Cargando..." className={styles.loadingImage} />
+      </Box>
+    </Box>
   );
 };
 

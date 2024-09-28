@@ -7,6 +7,7 @@ import { Provider as StoreProvider } from 'jotai';
 import '@fontsource/poppins';
 import { ThemeProvider } from '@mui/material';
 import themeConfig from './theme';
+import Loading from '@/components/loading/Loading';
 
 export const metadata: Metadata = {
   title: 'Alephium Profit',
@@ -24,6 +25,8 @@ export default function RootLayout({
         <AlephiumWalletProvider network="mainnet">
           <ThemeProvider theme={themeConfig}>
             <StoreProvider>
+              <Loading />
+
               <NavTop />
               {children}
               <NavBottom />

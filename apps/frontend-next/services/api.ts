@@ -112,8 +112,6 @@ export async function getMyBalance() {
       },
     });
 
-    console.log(res);
-
     if (!res.ok) throw new Error('Failed to retrieve balance');
 
     const data = await res.json();

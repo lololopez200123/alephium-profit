@@ -1,22 +1,20 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Modal, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
-const ModalFavouritesCoin = () => {
+type ModalFavouritesCoinProps = {
+  open: boolean;
+};
+const ModalFavouritesCoin = ({ open }: ModalFavouritesCoinProps) => {
   const router = useRouter();
 
   const handleNavigate = () => {
     router.push('/wallet');
   };
   return (
-    <Box
+    <Modal
+      open={open}
       sx={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -43,7 +41,7 @@ const ModalFavouritesCoin = () => {
             width: '9.375rem',
             textAlign: 'center',
             marginInline: 'auto',
-            borderBottom: '1px solid #28E7C5 ',
+            borderBottom: '1px solid rgba(255, 255, 255, 1) ',
             paddingBottom: '2.5rem',
           }}
         >
@@ -79,7 +77,7 @@ const ModalFavouritesCoin = () => {
           </Button>
         </Box>
       </Box>
-    </Box>
+    </Modal>
   );
 };
 

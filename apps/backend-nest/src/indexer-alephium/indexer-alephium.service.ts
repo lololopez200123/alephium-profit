@@ -46,40 +46,38 @@ export class IndexerAlephiumService {
   ) {}
 
   /**
-   * obtiene el balance del usuario junto al historial total y de favoritos
-   * @param address Dirección del usuario
-   * @param skipHistoryUpdate Si se debe omitir la actualización del historial
-   * @returns BalanceResponse
+   * Get the user's balance next to the total history and favorites
+   * @param address user address
+   * @Param Skiphistoryupdate If the history update should be omitted
+   * @returns Balance Response
    */
   async getMyBalance(
     address: string,
     skipHistoryUpdate: boolean = false,
   ): Promise<BalanceResponse> {
-    // Obtener el balance actual del usuario
     const balance = await this.fetchBalance(address);
     // const DECIMALS_ALPH = 18;
 
-    // Obtener los tokens listados y sus precios desde la base de datos
+    // Obtain the listed tokens and their prices from the database
     const listedTokens = await this.tokensService.getTokens();
     const tokenAddresses = listedTokens.map((token) => token.address);
 
-    // Crear un mapa de tokens listados por dirección
+    // believe a map of tokens listed by direct
     const listedTokensMap = new Map<string, Token>();
     listedTokens.forEach((token) => {
       listedTokensMap.set(token.address, token);
     });
 
-    // Obtener los precios de los tokens
     const priceMap = await this.tokensService.getTokenPrices(tokenAddresses);
 
-    // Procesar los balances del usuario
+    // Process the user's balances
     let totalAmountOnAlph = new BigNumber(0);
     const tokensWithDetails: TokenDetails[] = [];
 
     for (const tokenBalance of balance.tokens) {
       const tokenAddress = tokenBalance.token.address;
 
-      // Verificar si el token está listado
+      // Verify if the token is listed
       if (listedTokensMap.has(tokenAddress)) {
         const token = listedTokensMap.get(tokenAddress);
 
@@ -98,13 +96,13 @@ export class IndexerAlephiumService {
           amount: amount.toNumber(),
           amountOnAlph: amountOnAlph.toNumber(),
           logo: token.logo,
-          percent: 0, // Se calculará después
-          isFavourite: false, // Se actualizará después
+          percent: 0, // will be calculated later
+          isFavourite: false, // will be calculated later
         });
       }
     }
 
-    // Calcular el porcentaje para cada token
+    // Calculate the percentage for each token
     tokensWithDetails.forEach((token) => {
       const amountOnAlph = new BigNumber(token.amountOnAlph);
       token.percent = totalAmountOnAlph.isZero()
@@ -115,18 +113,18 @@ export class IndexerAlephiumService {
             .toNumber();
     });
 
-    // Obtener los tokens favoritos del usuario
+    // Get the user's favorite tokens
     const favouriteTokens = await this.userService.getFavoriteCoins(address);
     tokensWithDetails.forEach((token) => {
       token.isFavourite = favouriteTokens.includes(token.name);
     });
 
-    // Construir la respuesta inicial
+    // Build the initial answer
     const response: BalanceResponse = {
       totalAmount: totalAmountOnAlph.toNumber(),
       tokens: tokensWithDetails,
-      totalHistory: [], // Se llenará más adelante
-      totalFavouriteHistory: [], // Se llenará más adelante
+      totalHistory: [], // will be filled later
+      totalFavouriteHistory: [], // will be filled later
     };
 
     if (!skipHistoryUpdate) {
@@ -164,9 +162,9 @@ export class IndexerAlephiumService {
   }
 
   /**
-   * Verifica si han pasado al menos 30 minutos desde la última actualización del historial.
-   * @param address Dirección del usuario
-   * @returns Booleano indicando si se debe actualizar el historial
+   * Verify if at least 30 minutes have passed since the last update of the history.
+   * @param address user address
+   * @returns Boolean indicating whether the record should be updated
    */
   private async shouldUpdateHistory(address: string): Promise<boolean> {
     const lastEntry = await this.balanceHistoryModel
@@ -307,10 +305,10 @@ export class IndexerAlephiumService {
   }
 
   /**
-   * Actualiza el historial de balance del usuario.
-   * @param address Dirección del usuario
-   * @param tokens Detalles de los tokens
-   * @param totalAmount Valor total en Alephium
+   * Update the user's balance history.
+   * @param address
+   * @param tokens
+   * @param totalAmount
    */
   async updateBalanceHistory(
     address: string,
@@ -332,7 +330,6 @@ export class IndexerAlephiumService {
       throw error;
     }
 
-    // Mantener solo las últimas 16 entradas
     const totalEntries = await this.balanceHistoryModel.countDocuments({
       address,
     });
@@ -341,7 +338,7 @@ export class IndexerAlephiumService {
     if (totalEntries > MAX_ENTRIES) {
       const entriesToDelete = await this.balanceHistoryModel
         .find({ address })
-        .sort({ timestamp: 1 }) // Entradas más antiguas primero
+        .sort({ timestamp: 1 })
         .limit(totalEntries - MAX_ENTRIES)
         .exec();
 
@@ -352,7 +349,7 @@ export class IndexerAlephiumService {
   }
 
   /**
-   * Actualiza el historial de balance de favoritos del usuario.
+   * Update the user's favorite balance history.
    * @param address
    * @param tokens
    * @param totalAmount
@@ -389,7 +386,6 @@ export class IndexerAlephiumService {
       throw error;
     }
 
-    // Mantener solo las últimas 16 entradas
     const totalEntries = await this.balanceHistoryModel.countDocuments({
       address,
     });
@@ -398,7 +394,7 @@ export class IndexerAlephiumService {
     if (totalEntries > MAX_ENTRIES) {
       const entriesToDelete = await this.balanceHistoryModel
         .find({ address })
-        .sort({ timestamp: 1 }) // Entradas más antiguas primero
+        .sort({ timestamp: 1 }) // older entries first
         .limit(totalEntries - MAX_ENTRIES)
         .exec();
 
@@ -413,18 +409,14 @@ export class IndexerAlephiumService {
     timeZone: 'America/Argentina/Buenos_Aires',
   })
   async automaticUpdateAllUsersBalanceHistory() {
-    // Obtener todos los usuarios
     const users = await this.userService.findAllUsers();
 
-    // Iterar sobre cada usuario
     for (const user of users) {
       const address = user.address;
 
-      // Obtener el balance del usuario sin actualizar el historial dentro de getMyBalance
       const balanceResponse = await this.getMyBalance(address, true);
       const { tokens, totalAmount } = balanceResponse;
 
-      // Actualizar el historial de balance para el usuario
       await this.updateBalanceHistory(address, tokens, totalAmount);
     }
   }
@@ -434,18 +426,16 @@ export class IndexerAlephiumService {
     timeZone: 'America/Argentina/Buenos_Aires',
   })
   async automaticUpdateAllUsersFavouriteBalanceHistory() {
-    // Obtener todos los usuarios
     const users = await this.userService.findAllUsers();
 
-    // Iterar sobre cada usuario
     for (const user of users) {
       const address = user.address;
 
-      // Obtener el balance del usuario sin actualizar el historial dentro de getMyBalance
+      // Obtain the user's balance without updating the history within Getmybalance
       const balanceResponse = await this.getMyBalance(address, true);
       const { tokens, totalAmount } = balanceResponse;
 
-      // Actualizar el historial de favoritos para el usuario
+      // Update the user's favorite history
       await this.updateFavouriteBalanceHistory(address, tokens, totalAmount);
     }
   }

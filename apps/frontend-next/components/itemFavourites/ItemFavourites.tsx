@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { TokenDetails } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
 import { Box, Typography } from '@mui/material';
 import formatPNLvalue from '@/utils/formatPnl';
+import { motion } from 'framer-motion';
 
 type TokenDetailsWithPNL = TokenDetails & {
   pnl: number;
@@ -19,6 +20,8 @@ const ItemFavourites = ({ index, handleSelectCoin, item, isSelected }: Props) =>
 
   return (
     <Box
+      component={motion.div}
+      whileTap={{ scale: 0.98 }}
       key={index}
       onClick={() => handleSelectCoin(item)}
       sx={{

@@ -1,23 +1,24 @@
-"use client";
-import { Box, Typography } from "@mui/material";
+'use client';
+import { Box, Typography } from '@mui/material';
 
 function Notfications() {
   return (
     <Box
       sx={{
-        display: "flex",
-        paddingBlock: "20%",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-        paddingX: "1rem",
-        overflowX: "hidden",
-        overflowY: "auto",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+        paddingX: '1rem',
+        overflowX: 'hidden',
+        overflowY: 'auto',
       }}
     >
-      <Typography>Coming Soon</Typography>
+      <Typography paddingBottom={'4rem'} color={'rgba(40, 231, 197, 1)'}>
+        Coming Soon
+      </Typography>
     </Box>
   );
 }

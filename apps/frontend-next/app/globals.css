@@ -32,6 +32,7 @@ p {
 .container {
   background: linear-gradient(180deg, #0b1426 60%, rgba(40, 231, 197, 0.3) 130%);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  background-size: 200% 200%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -40,6 +41,7 @@ p {
   width: 100%;
   max-width: 450px;
   position: relative;
+  animation: gradientAnimation 15s ease-in-out infinite; /* Aplica la animación */
 }
 
 ::-webkit-scrollbar {
@@ -112,5 +114,53 @@ p {
   100% {
     opacity: 1;
     transition: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  }
+}
+
+@-webkit-keyframes gradientAnimation {
+  0% {
+    background-position: 32% 60%;
+  }
+  50% {
+    background-position: 62% 90%;
+  }
+  100% {
+    background-position: 32% 60%;
+  }
+}
+
+@-moz-keyframes gradientAnimation {
+  0% {
+    background-position: 32% 60%;
+  }
+  50% {
+    background-position: 62% 90%;
+  }
+  100% {
+    background-position: 32% 60%;
+  }
+}
+
+@-o-keyframes gradientAnimation {
+  0% {
+    background-position: 32% 60%;
+  }
+  50% {
+    background-position: 62% 90%;
+  }
+  100% {
+    background-position: 32% 60%;
+  }
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 32% 60%;
+  }
+  50% {
+    background-position: 62% 90%;
+  }
+  100% {
+    background-position: 32% 60%;
   }
 }

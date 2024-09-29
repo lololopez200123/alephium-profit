@@ -138,7 +138,7 @@ function ProfitCharts() {
         overflowX: 'hidden',
       }}
     >
-      {balance?.tokens && coin.length === 0 && <ModalFavouritesCoin />}
+      {balance?.tokens && coin.length === 0 && <ModalFavouritesCoin open={true} />}
       <Box
         sx={{
           height: '45%',

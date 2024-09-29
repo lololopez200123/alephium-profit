@@ -1,16 +1,32 @@
-import { Box, Button, Modal, Typography } from '@mui/material';
+import { Box, Button, IconButton, Modal, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { useConnect } from '@alephium/web3-react';
+import nookies from 'nookies';
 import React from 'react';
+import Image from 'next/image';
 
-type ModalFavouritesCoinProps = {
+type ModalDisconnectProps = {
+  name: string | undefined;
+  setOpenModal: (value: boolean) => void;
   open: boolean;
 };
-const ModalFavouritesCoin = ({ open }: ModalFavouritesCoinProps) => {
+
+const ModalDisconnect = ({ name, setOpenModal, open }: ModalDisconnectProps) => {
   const router = useRouter();
+  const { disconnect } = useConnect();
 
   const handleNavigate = () => {
-    router.push('/wallet');
+    router.push('/home');
   };
+
+  const handleDisconnect = () => {
+    localStorage.clear();
+    nookies.destroy(null, 'jwt', { path: '/' });
+    disconnect();
+    setOpenModal(false);
+    handleNavigate();
+  };
+
   return (
     <Modal
       open={open}
@@ -33,8 +49,12 @@ const ModalFavouritesCoin = ({ open }: ModalFavouritesCoinProps) => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
+          position: 'relative',
         }}
       >
+        <IconButton sx={{ position: 'absolute', right: 0, top: 0, padding: '10px' }} onClick={() => setOpenModal(false)}>
+          <Image alt="close" src="/close-modal.svg" width="8" height="8" />
+        </IconButton>
         <Box
           sx={{
             height: '12%',
@@ -43,9 +63,10 @@ const ModalFavouritesCoin = ({ open }: ModalFavouritesCoinProps) => {
             marginInline: 'auto',
             borderBottom: '1px solid rgba(255, 255, 255, 1) ',
             paddingBottom: '2.5rem',
+            position: 'relative',
           }}
         >
-          <Typography sx={{ fontWeight: 600, fontSize: '1.25rem' }}>Important</Typography>
+          <Typography sx={{ fontWeight: 600, fontSize: '1.25rem' }}>{name}</Typography>:
         </Box>
         <Box sx={{ heigth: '57%', width: '100%', display: 'flex', justifyContent: 'center' }}>
           <Typography
@@ -56,12 +77,14 @@ const ModalFavouritesCoin = ({ open }: ModalFavouritesCoinProps) => {
               textAlign: 'center',
             }}
           >
-            Select a favorite coin from your wallet to create your new performance chart
+            Are you sure you want to disconnect your wallet?
           </Typography>
         </Box>
         <Box sx={{ height: '31%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Button
-            onClick={handleNavigate}
+            onClick={() => {
+              handleDisconnect();
+            }}
             sx={{
               width: '150px',
               color: 'white',
@@ -73,7 +96,7 @@ const ModalFavouritesCoin = ({ open }: ModalFavouritesCoinProps) => {
               fontSize: { xs: '12px', sm: '14px' },
             }}
           >
-            Enter Wallet
+            Disconnect
           </Button>
         </Box>
       </Box>
@@ -81,4 +104,4 @@ const ModalFavouritesCoin = ({ open }: ModalFavouritesCoinProps) => {
   );
 };
 
-export default ModalFavouritesCoin;
+export default ModalDisconnect;

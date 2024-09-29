@@ -5,12 +5,13 @@ import Link from 'next/link';
 import { useAtom } from 'jotai';
 import { userAtom } from '@/store/userAtom';
 import { useState } from 'react';
+import ModalDisconnect from './modalDisconnect/modalDisconnect';
 
 const menuBox = {
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
-  paddingTop: '12%',
+  paddingTop: '9%',
 };
 const menuItemBox = {
   display: 'flex',
@@ -21,8 +22,7 @@ const textItem = {
   textAlign: 'end',
   width: '70%',
   fontFamily: 'Poppins',
-  fontSize: '1.25rem',
-  paddingRight: '3%',
+  fontSize: '1.125rem',
   color: 'white',
 };
 const itemIconBox = {
@@ -42,13 +42,13 @@ const menuItems = [
 ];
 
 const lastMenuItem = {
-  name: 'log out',
+  name: 'Log out',
   iconSrc: '/rocket-menu.svg',
-  route: './',
 };
 
 const BurgerMenu = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [user] = useAtom(userAtom);
 
   const handleClick = () => {
@@ -57,6 +57,10 @@ const BurgerMenu = () => {
 
   const handleClose = () => {
     setIsOpen(false);
+  };
+
+  const handleModal = () => {
+    setOpenModal(!openModal);
   };
 
   return (
@@ -117,13 +121,13 @@ const BurgerMenu = () => {
             }}
           >
             <Typography fontSize={'1.25rem'} color="white" variant="h4">
-              {user?.name}
+              {user?.name ?? ''}
             </Typography>
           </Box>
           <Box
             sx={{
               width: '70%',
-              borderBottom: '2px solid rgba(255, 255, 255)',
+              borderBottom: '1px solid rgba(255, 255, 255)',
               right: '0',
               borderRadius: '2px',
               marginRight: '10%',
@@ -133,7 +137,7 @@ const BurgerMenu = () => {
           {/* Rendering of menu items*/}
           <Box sx={menuBox}>
             {menuItems.map((item, id) => (
-              <Link key={id} href={item.route} className="menu-item">
+              <Link key={id} href={item.route} onClick={() => handleClose()} className="menu-item">
                 <Box sx={menuItemBox}>
                   <Typography sx={textItem}>{item.name}</Typography>
                   <Box sx={itemIconBox}>
@@ -149,35 +153,36 @@ const BurgerMenu = () => {
             sx={{
               width: '70%',
               marginTop: 'auto',
-              borderBottom: '2px solid rgba(255, 255, 255)',
+              borderBottom: '1px solid rgba(255, 255, 255)',
               right: '0',
               borderRadius: '2px',
               marginRight: '10%',
               marginLeft: '20%',
             }}
           ></Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <Link
-              href={{
-                pathname: lastMenuItem.route,
+          <Box
+            onClick={() => {
+              handleClose();
+              handleModal();
+            }}
+            sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                paddingBlock: '2%',
               }}
             >
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  paddingBlock: '2%',
-                }}
-              >
-                <Typography sx={textItem}>{lastMenuItem.name}</Typography>
-                <Box sx={itemIconBox}>
-                  <Image alt={lastMenuItem.name} width={24} height={24} src={lastMenuItem.iconSrc} />
-                </Box>
+              <Typography sx={textItem}>{lastMenuItem.name}</Typography>
+              <Box sx={itemIconBox}>
+                <Image alt={lastMenuItem.name} width={24} height={24} src={lastMenuItem.iconSrc} />
               </Box>
-            </Link>
+            </Box>
           </Box>
         </Box>
       </Modal>
+      <ModalDisconnect name={user?.name} setOpenModal={setOpenModal} open={openModal} />
     </Box>
   );
 };

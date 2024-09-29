@@ -1,20 +1,30 @@
-const BASE_URL = 'https://backend-3grl.onrender.com';
+function getApiBaseUrl() {
+  if (typeof window !== 'undefined') {
+    // En el cliente, las solicitudes se hacen relativas
+    return '/api';
+  } else {
+    // En el servidor, construye la URL absoluta
+    const host = process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : `http://localhost:${process.env.PORT || 3000}`;
+    return `${host}/api`;
+  }
+}
+
+export const API_BASE = getApiBaseUrl();
 
 export const API_ENDPOINTS = {
   auth: {
-    generateSign: `${BASE_URL}/auth/sign`,
-    getCredentials: `${BASE_URL}/auth/credentials`,
+    generateSign: '/auth/generateSign',
+    login: '/auth/login',
+    logout: '/auth/logout',
   },
   users: {
-    getMyInfo: `${BASE_URL}/users/my-info`,
-    addFavoriteCoin: `${BASE_URL}/users/favorite-coin`,
-    deleteFavoriteCoin: `${BASE_URL}/users/favorite-coin`,
-    getFavoriteCoins: `${BASE_URL}/users/favorite-coins`,
+    myInfo: '/users/myInfo',
+    addFavoriteCoin: '/users/addFavoriteCoin',
+    deleteFavoriteCoin: '/users/deleteFavoriteCoin',
+    getFavoriteCoins: '/users/getFavoriteCoins',
   },
   indexerAlephium: {
-    getMyBalance: `${BASE_URL}/indexer-alephium/my-balance`,
-    getPopularCoinsInfo: `${BASE_URL}/indexer-alephium/get-popular-coins-info`,
-    getFavoriteCoinsInfo: `${BASE_URL}/indexer-alephium/favorite-coins-info`,
-    getMarketInfoBatch: `${BASE_URL}/indexer-alephium/get-crypto-info-batch`,
+    getMyBalance: '/indexerAlephium/getMyBalance',
+    getPopularCoinsInfo: '/indexerAlephium/getPopularCoinsInfo',
   },
 };

@@ -8,6 +8,7 @@ import '@fontsource/poppins';
 import { ThemeProvider } from '@mui/material';
 import themeConfig from './theme';
 import Loading from '@/components/loading/Loading';
+import ModalConnectWallet from '@/components/modalConnectWallet/ModalConnectWallet';
 
 export const metadata: Metadata = {
   title: 'Alephium Profit',
@@ -72,8 +73,8 @@ export default function RootLayout({
         <AlephiumWalletProvider network="mainnet">
           <ThemeProvider theme={themeConfig}>
             <StoreProvider>
+              <ModalConnectWallet />
               <Loading />
-
               <NavTop />
               {children}
               <NavBottom />

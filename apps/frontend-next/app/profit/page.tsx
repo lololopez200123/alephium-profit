@@ -28,13 +28,20 @@ function ProfitCharts() {
       if (!balance?.totalFavouriteHistory || balance.totalFavouriteHistory.length === 0) {
         return 0;
       }
-
       // Ordenar el historial por timestamp ascendente
       const sortedHistory = [...balance.totalFavouriteHistory].sort((a, b) => a.timestamp - b.timestamp);
 
-      // Obtener el historial inicial y actual
-      const initialHistory = sortedHistory[0];
-      const currentHistory = sortedHistory[sortedHistory.length - 1];
+      // Encontrar el primer historial que contiene el token
+      const initialHistory = sortedHistory.find((history) => history.tokens.some((t) => t.name === token.name));
+
+      // Encontrar el último historial que contiene el token
+      const reversedHistory = [...sortedHistory].reverse();
+      const currentHistory = reversedHistory.find((history) => history.tokens.some((t) => t.name === token.name));
+
+      // Si no se encontró el token en ningún historial, retornar 0
+      if (!initialHistory || !currentHistory) {
+        return 0;
+      }
 
       // Encontrar los datos del token en los históricos
       const initialToken = initialHistory.tokens.find((t) => t.name === token.name);

@@ -362,11 +362,20 @@ export class IndexerAlephiumService {
     tokens: TokenDetails[],
     totalAmount: number,
   ) {
+    const tokenFavourites = tokens.filter((token) => token.isFavourite);
+
+    if (tokenFavourites.length === 0) {
+      console.log(
+        `There are no favorite tokens to update. for wallet ${address}`,
+      );
+      return;
+    }
+
     const newFavouriteBalanceHistory = new this.balanceFavouriteHistoryModel({
       address,
       timestamp: Date.now(),
       totalAmount,
-      tokens: tokens?.filter((token) => token.isFavourite),
+      tokens: tokenFavourites,
     });
 
     try {

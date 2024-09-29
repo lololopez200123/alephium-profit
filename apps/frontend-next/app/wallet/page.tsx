@@ -61,6 +61,8 @@ function Wallet() {
     return results.map((result) => result.item);
   }, [fuse, searchTerm, balance]);
 
+  const totalAmount = balance?.totalAmount ?? 0;
+
   return (
     <Box
       sx={{
@@ -90,7 +92,7 @@ function Wallet() {
               alignItems: 'baseline',
             }}
           >
-            <Typography sx={{ fontSize: '2.5rem' }}>{balance?.totalAmount.toFixed(2) ?? 0}</Typography>
+            <Typography sx={{ fontSize: '2.5rem' }}>{totalAmount}</Typography>
             <Typography
               sx={{
                 fontSize: '0.725rem',
@@ -153,7 +155,7 @@ function Wallet() {
         </Box>
       </Box>
 
-      <Box sx={{ height: '50%', paddingBottom: '4rem' }}>
+      <Box sx={{ height: '50%' }}>
         <Typography
           sx={{
             marginBlock: '0.3125rem',

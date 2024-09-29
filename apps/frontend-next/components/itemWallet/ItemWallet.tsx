@@ -1,3 +1,4 @@
+import useAnimatedValue from '@/hooks/useAnimatedValue';
 import { TokenDetails } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import Image from 'next/image';
@@ -9,6 +10,8 @@ type Props = {
 };
 
 const ItemWallet = ({ coin, index, handleClick }: Props) => {
+  const currentAnimatedPercent = useAnimatedValue(coin.percent);
+
   return (
     <Box
       key={coin.name}
@@ -108,7 +111,7 @@ const ItemWallet = ({ coin, index, handleClick }: Props) => {
           position: 'relative',
         }}
       >
-        <Typography variant="subtitle2">{coin.percent}%</Typography>
+        <Typography variant="subtitle2">{currentAnimatedPercent}%</Typography>
         <svg width={0} height={0}>
           <defs>
             <linearGradient id="my_gradient" x1="100%" y1="0%" x2="0%" y2="40%">
@@ -138,7 +141,7 @@ const ItemWallet = ({ coin, index, handleClick }: Props) => {
           size={64}
           thickness={7}
           variant="determinate"
-          value={coin.percent === 0 ? 0.1 : coin.percent}
+          value={coin.percent === 0 ? 0.1 : currentAnimatedPercent}
         />
       </Box>
     </Box>

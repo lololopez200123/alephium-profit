@@ -61,7 +61,7 @@ function Wallet() {
     return results.map((result) => result.item);
   }, [fuse, searchTerm, balance]);
 
-  const totalAmount = balance?.totalAmount ?? 0;
+  const totalAmount = balance?.totalAmount.toFixed(2) ?? 0;
 
   return (
     <Box

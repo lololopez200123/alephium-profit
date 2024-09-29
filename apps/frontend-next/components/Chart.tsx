@@ -26,52 +26,48 @@ function Chart({ data }: ChartProps) {
     (arrayData?.reduce((a, b) => Math.min(a, b)) || -1) * FACTOR_MULTIPLIER > 0 ? 0 : (arrayData?.reduce((a, b) => Math.min(a, b)) || -1) * FACTOR_MULTIPLIER;
   const pData = [{ data: arrayData, area: true, baseline: minN }];
   return (
-    <>
-      <Box
-        sx={{
-          position: 'relative',
-          maxWidth: '560px',
-          width: '145%',
-          left: '50%',
-          transform: 'translate(-50%,-20%)',
-          height: '100%',
-          [`& .${markElementClasses.root}`]: {
-            display: 'none',
-          },
-          [`& .${axisClasses.root}`]: {
-            display: 'none',
-          },
-          [`& .${lineElementClasses.root}`]: {
-            stroke: isConstantData ? 'url(#paint0_linear_285_258)' : 'url(#gradient)',
-            strokeWidth: 3,
-          },
-          [`& .${areaElementClasses.root}`]: {
-            fill: isConstantData ? 'none' : 'url(#areaGradient)',
-            opacity: 0.3,
-          },
-        }}
-      >
-        <svg width="0" height="0">
-          <defs>
-            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#6942E2" stopOpacity="1" />
-              <stop offset="100%" stopColor="#28E7C5" stopOpacity="1" />
-            </linearGradient>
-            {/* Gradiente para el área */}
-            <linearGradient id="areaGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#0b1426" />
-              <stop offset="100%" stopColor="rgba(40, 231, 197, .4)" />
-            </linearGradient>
-            <linearGradient id="paint0_linear_285_258" x1="375" y1="-0.5" x2="4.37114e-08" y2="-0.500033" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#28E7C5" />
-              <stop offset="1" stopColor="#6942E2" />
-            </linearGradient>
-          </defs>
-        </svg>
-
-        <LineChart yAxis={[{ max: maxN, min: minN }]} axisHighlight={{ x: 'none', y: 'none' }} series={pData} />
-      </Box>
-    </>
+    <Box
+      sx={{
+        position: 'relative',
+        maxWidth: '560px',
+        width: '145%',
+        left: '50%',
+        transform: 'translate(-50%,-20%)',
+        height: '100%',
+        [`& .${markElementClasses.root}`]: {
+          display: 'none',
+        },
+        [`& .${axisClasses.root}`]: {
+          display: 'none',
+        },
+        [`& .${lineElementClasses.root}`]: {
+          stroke: isConstantData ? 'url(#paint0_linear_285_258)' : 'url(#gradient)',
+          strokeWidth: 3,
+        },
+        [`& .${areaElementClasses.root}`]: {
+          fill: isConstantData ? 'none' : 'url(#areaGradient)',
+          opacity: 0.3,
+        },
+      }}
+    >
+      <LineChart yAxis={[{ max: maxN, min: minN }]} axisHighlight={{ x: 'none', y: 'none' }} series={pData}>
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#6942E2" stopOpacity="1" />
+            <stop offset="100%" stopColor="#28E7C5" stopOpacity="1" />
+          </linearGradient>
+          {/* Gradiente para el área */}
+          <linearGradient id="areaGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="#0b1426" />
+            <stop offset="100%" stopColor="rgba(40, 231, 197, .4)" />
+          </linearGradient>
+          <linearGradient id="paint0_linear_285_258" x1="375" y1="-0.5" x2="4.37114e-08" y2="-0.500033" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#28E7C5" />
+            <stop offset="1" stopColor="#6942E2" />
+          </linearGradient>
+        </defs>
+      </LineChart>
+    </Box>
   );
 }
 

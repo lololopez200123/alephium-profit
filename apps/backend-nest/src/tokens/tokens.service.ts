@@ -59,11 +59,15 @@ export class TokensService {
 
       if (response.data.prices && response.data.prices.length > 0) {
         const priceData = response.data.prices[0];
+        // TODO: review SWAPA token ISSUE
+        if (priceData.token.symbol === 'SWAPA') {
+          return;
+        }
         const price = new BigNumber(priceData.price).dividedBy(
           new BigNumber(10).pow(18),
         );
 
-        // Crear o actualizar el precio del token
+        // Create or update the token price
         await this.tokenPriceModel.findOneAndUpdate(
           { tokenAddress: token.address },
           {

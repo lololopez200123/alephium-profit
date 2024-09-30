@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { TokenDetails } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
+import { TokenDetails } from '../../../../backend-nest/src/indexer-alephium/interfaces/balance';
 import { Box, Typography } from '@mui/material';
 import formatPNLvalue from '@/utils/formatPnl';
 import { motion } from 'framer-motion';

@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import NavBottom from '@/components/NavBottom';
-import NavTop from '@/components/NavTop';
+import NavBottom from '@/components/Common/NavBottom/NavBottom';
 import { AlephiumWalletProvider } from '@alephium/web3-react';
 import { Provider as StoreProvider } from 'jotai';
 import '@fontsource/poppins';
 import { ThemeProvider } from '@mui/material';
 import themeConfig from './theme';
-import Loading from '@/components/loading/Loading';
-import ModalConnectWallet from '@/components/modalConnectWallet/ModalConnectWallet';
+import Loading from '@/components/misc/loading/Loading';
+import NavTop from '@/components/Common/NavTop/NavTop';
+import ModalConnectWallet from '@/components/misc/modalConnectWallet/ModalConnectWallet';
 
 export const metadata: Metadata = {
   title: 'Alephium Profit',

@@ -4,6 +4,7 @@ import { Coin } from '@/app/home/page';
 import { Box, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { itemPopularStyles } from './ItemPopular.styles';
 
 type Props = {
   coin: Coin;
@@ -28,33 +29,9 @@ const variants = {
 
 const ItemPopular = ({ coin }: Props) => {
   return (
-    <Box
-      variants={variants}
-      component={motion.div}
-      whileTap={{ scale: 0.95 }}
-      key={coin?.price}
-      sx={{
-        display: 'flex',
-        height: '48px',
-        justifyContent: 'space-between',
-        borderRadius: '10px',
-        background: `linear-gradient(180deg, rgba(255, 255, 255, 0.15) -142.19%, rgba(11, 20, 38, 0.15) 214.06%)`,
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '24px',
-            height: '24px',
-            background: 'white',
-            borderRadius: '30px',
-            margin: '0.8rem',
-            marginInline: '1.25rem',
-          }}
-        >
+    <Box variants={variants} component={motion.div} whileTap={{ scale: 0.95 }} key={coin?.price} sx={itemPopularStyles.container}>
+      <Box sx={itemPopularStyles.leftSection}>
+        <Box sx={itemPopularStyles.logoContainer}>
           <Image width="18" height="18" alt="1" src={coin.logo}></Image>
         </Box>
         <Typography variant="subtitle2" key={coin?.name}>
@@ -63,23 +40,14 @@ const ItemPopular = ({ coin }: Props) => {
         <Typography
           variant="caption"
           sx={{
-            paddingLeft: '.9rem',
-            fontSize: '0.625rem',
+            ...itemPopularStyles.priceChange,
             color: coin?.priceChange <= 0 ? 'rgba(226, 66, 66, 1)' : 'rgba(40, 231, 197, 1)',
           }}
         >
           {coin.priceChange}%
         </Typography>
       </Box>
-      <Box
-        sx={{
-          width: '21%',
-          display: 'flex',
-          alignItems: 'left',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}
-      >
+      <Box sx={itemPopularStyles.rightSection}>
         <Typography variant="subtitle1" key={coin?.price}>
           {coin?.price}
         </Typography>

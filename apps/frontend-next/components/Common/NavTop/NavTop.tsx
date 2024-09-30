@@ -2,15 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
-import BurgerMenu from './BurgerMenu';
 import { usePathname } from 'next/navigation';
-import ButtonConnectWallet from './ButtonConnectWallet';
+import ButtonConnectWallet from '../ButtonConnectWallet/ButtonConnectWallet';
 import { useWallet } from '@alephium/web3-react';
 import { useAtom } from 'jotai';
 import { userAtom } from '@/store/userAtom';
 import { generateSign, getMyBalance, getMyInfo } from '@/services/api';
 import { userBalanceAtom } from '@/store/userBalanceAtom';
-import SearchItemsInput from './misc/SearchItemsInput';
+import SearchItemsInput from '../../misc/SearchItemsInput';
+import BurgerMenu from '../BurgerMenu/BurgerMenu';
 
 interface Token {
   name: string;

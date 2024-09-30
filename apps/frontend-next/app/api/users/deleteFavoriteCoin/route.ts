@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { parse } from 'cookie';
 
 export async function DELETE(request: Request) {
+  const cookieHeader = request.headers.get('cookie');
   try {
     const { coin } = await request.json();
 
-    const cookieHeader = request.headers.get('cookie');
     if (!cookieHeader) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }

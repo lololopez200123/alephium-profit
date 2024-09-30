@@ -1,14 +1,14 @@
 'use client';
 import { Box, Typography, Button } from '@mui/material';
 import React, { useMemo, useState } from 'react';
-import Chart from '@/components/Chart';
+import Chart from '@/components/Common/Chart/Chart';
 import { userBalanceAtom } from '@/store/userBalanceAtom';
 import { useAtom } from 'jotai';
 import { addFavoriteCoin, deleteFavoriteCoin } from '@/services/api';
-import ItemWallet from '@/components/itemWallet/ItemWallet';
 import { BalanceResponse } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
 import { searchTermAtom } from '@/store/searchAtom';
 import Fuse from 'fuse.js';
+import ItemWallet from '@/components/Wallet/itemWallet/ItemWallet';
 
 const selectedTime = ['1D', '1W', '1M', '1Y'];
 

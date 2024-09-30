@@ -1,7 +1,7 @@
 import useAnimatedValue from '@/hooks/useAnimatedValue';
-import { TokenDetails } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import Image from 'next/image';
+import { TokenDetails } from '../../../../backend-nest/src/indexer-alephium/interfaces/balance';
 
 type Props = {
   coin: TokenDetails;

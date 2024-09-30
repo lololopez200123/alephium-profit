@@ -98,4 +98,5 @@ export const lastMenuItemContentStyles: SxProps = {
   display: 'flex',
   alignItems: 'center',
   paddingBlock: '2%',
+  cursor: 'pointer',
 };

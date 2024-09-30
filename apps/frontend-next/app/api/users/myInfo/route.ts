@@ -5,7 +5,6 @@ export async function GET(request: Request) {
   try {
     const cookieHeader = request.headers.get('cookie');
 
-    console.log(cookieHeader);
     if (!cookieHeader) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }

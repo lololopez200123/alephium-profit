@@ -19,7 +19,7 @@ const ModalConnectWallet = () => {
   };
 
   useEffect(() => {
-    if (connectionStatus === 'disconnected' && PRIVATE_ROUTES.includes(path)) {
+    if (connectionStatus !== 'connected' && PRIVATE_ROUTES.includes(path)) {
       setOpen(true);
     }
     return () => {
@@ -29,6 +29,7 @@ const ModalConnectWallet = () => {
 
   return (
     <Modal
+      keepMounted
       onClose={handleClose}
       open={open}
       sx={{

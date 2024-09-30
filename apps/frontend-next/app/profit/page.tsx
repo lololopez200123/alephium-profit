@@ -28,6 +28,7 @@ function ProfitCharts() {
       if (!balance?.totalFavouriteHistory || balance.totalFavouriteHistory.length === 0) {
         return 0;
       }
+
       // Ordenar el historial por timestamp ascendente
       const sortedHistory = [...balance.totalFavouriteHistory].sort((a, b) => a.timestamp - b.timestamp);
 
@@ -47,13 +48,28 @@ function ProfitCharts() {
       const initialToken = initialHistory.tokens.find((t) => t.name === token.name);
       const currentToken = currentHistory.tokens.find((t) => t.name === token.name);
 
-      const initialAmount = initialToken ? initialToken.amountOnAlph : 0;
-      const currentAmount = currentToken ? currentToken.amountOnAlph : 0;
+      // Si no existen datos iniciales o actuales del token, retornar 0
+      if (!initialToken || !currentToken) {
+        return 0;
+      }
 
-      // Calcular el PNL
-      const pnl = currentAmount - initialAmount;
+      // Obtener el monto y el precio del token en los históricos
+      const initialAmount = initialToken.amountOnAlph || 0;
+      const currentAmount = currentToken.amountOnAlph || 0;
 
-      return pnl;
+      // Calcular el valor inicial y actual (monto * precio)
+      const initialValue = initialAmount;
+      const currentValue = currentAmount;
+
+      // Evitar dividir entre 0
+      if (initialValue === 0) {
+        return 0;
+      }
+
+      // Calcular el PNL en porcentaje
+      const pnlPercentage = ((currentValue - initialValue) / initialValue) * 100;
+
+      return pnlPercentage;
     },
     [balance?.totalFavouriteHistory]
   );

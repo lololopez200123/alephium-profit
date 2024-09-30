@@ -66,7 +66,7 @@ const ModalDisconnect = ({ name, setOpenModal, open }: ModalDisconnectProps) => 
             position: 'relative',
           }}
         >
-          <Typography sx={{ fontWeight: 600, fontSize: '1.25rem' }}>{name}</Typography>:
+          <Typography sx={{ fontWeight: 600, fontSize: '1.25rem' }}>{name}</Typography>
         </Box>
         <Box sx={{ heigth: '57%', width: '100%', display: 'flex', justifyContent: 'center' }}>
           <Typography

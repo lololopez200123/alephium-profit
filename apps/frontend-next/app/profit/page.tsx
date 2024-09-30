@@ -16,6 +16,12 @@ export type TokenDetailsWithPNL = TokenDetails & {
   pnl: number;
 };
 
+interface tract {
+  amount: number;
+  initialAmountOnAlph: number;
+  finalAmountOnAlph: number;
+}
+
 function ProfitCharts() {
   const [balance] = useAtom(userBalanceAtom);
   const favouriteTokens = useMemo(() => balance?.tokens?.filter((token) => token.isFavourite === true) || [], [balance]);
@@ -72,35 +78,82 @@ function ProfitCharts() {
         return 0;
       }
 
+      // Filter the history according to the time range and order for ascending Timestamp
       const filteredHistory = balance.totalFavouriteHistory.filter((entry) => entry.timestamp >= timeRange).sort((a, b) => a.timestamp - b.timestamp);
 
-      const initialHistory = filteredHistory.find((history) => history.tokens.some((t) => t.name === token.name));
-      const reversedHistory = [...filteredHistory].reverse();
-      const currentHistory = reversedHistory.find((history) => history.tokens.some((t) => t.name === token.name));
+      // Filter the entries containing the specific token
+      const tokenHistory = filteredHistory
+        .map((history) => {
+          const tokenData = history.tokens.find((t) => t.name === token.name);
+          if (tokenData) {
+            return {
+              timestamp: history.timestamp,
+              amount: tokenData.amount,
+              amountOnAlph: tokenData.amountOnAlph,
+            };
+          }
+          return null;
+        })
+        .filter((data) => data !== null) as { timestamp: number; amount: number; amountOnAlph: number }[];
 
-      if (!initialHistory || !currentHistory) {
+      if (tokenHistory.length === 0) {
         return 0;
       }
 
-      const initialToken = initialHistory.tokens.find((t) => t.name === token.name);
-      const currentToken = currentHistory.tokens.find((t) => t.name === token.name);
+      // Function to divide the history into sections
+      const divideTracts = (history: { timestamp: number; amount: number; amountOnAlph: number }[]): tract[] => {
+        const tramos: tract[] = [];
+        let currentTramo: tract | null = null;
 
-      if (!initialToken || !currentToken) {
+        history.forEach((entry) => {
+          if (!currentTramo || entry.amount !== currentTramo.amount) {
+            // Start a new section when the amount changes
+            if (currentTramo) {
+              // Update the final value of the previous section
+              currentTramo.finalAmountOnAlph = entry.amountOnAlph;
+              tramos.push(currentTramo);
+            }
+            // Start a new section
+            currentTramo = {
+              amount: entry.amount,
+              initialAmountOnAlph: entry.amountOnAlph,
+              finalAmountOnAlph: entry.amountOnAlph,
+            };
+          } else {
+            // Update the final value of the current section
+            currentTramo.finalAmountOnAlph = entry.amountOnAlph;
+          }
+        });
+
+        // Add the last section if it exists
+        if (currentTramo) {
+          tramos.push(currentTramo);
+        }
+
+        return tramos;
+      };
+
+      const tramos = divideTracts(tokenHistory);
+
+      let gananciaTotal = 0;
+      let valorInicialTotal = 0;
+
+      tramos.forEach((tramo) => {
+        const valorInicial = tramo.amount * tramo.initialAmountOnAlph;
+        const valorFinal = tramo.amount * tramo.finalAmountOnAlph;
+        const ganancia = valorFinal - valorInicial;
+
+        gananciaTotal += ganancia;
+        valorInicialTotal += valorInicial;
+      });
+
+      if (valorInicialTotal === 0) {
         return 0;
       }
 
-      const initialAmount = initialToken.amountOnAlph || 0;
-      const currentAmount = currentToken.amountOnAlph || 0;
+      const pnlTotal = (gananciaTotal / valorInicialTotal) * 100;
 
-      const initialValue = initialAmount;
-      const currentValue = currentAmount;
-
-      if (initialValue === 0) {
-        return 0;
-      }
-
-      const pnlPercentage = ((currentValue - initialValue) / initialValue) * 100;
-      return pnlPercentage;
+      return pnlTotal;
     },
     [balance?.totalFavouriteHistory, timeRange]
   );

@@ -5,24 +5,15 @@ import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import React from 'react';
+import { heroHomeStyles } from './Herohome.styles';
 
 const HeroHome = () => {
   const [show] = useAtom(loadingScreenAtom);
 
   return (
-    <Box
-      sx={{
-        height: '45%',
-      }}
-    >
+    <Box sx={heroHomeStyles.container}>
       <Box
-        sx={{
-          display: 'flex',
-          position: 'relative',
-          left: '0',
-          marginBottom: '5%',
-          marginInline: '2px',
-        }}
+        sx={heroHomeStyles.logoContainer}
         component={motion.div}
         animate={{
           opacity: [0, 1],
@@ -47,32 +38,12 @@ const HeroHome = () => {
             ease: 'easeInOut',
           },
         }}
-        sx={{
-          marginBottom: '32%',
-          position: 'relative',
-          left: 'clamp(.5rem,4.26%,1%)',
-        }}
+        sx={heroHomeStyles.textContainer}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            fontSize: '2rem',
-            fontWeight: '500',
-          }}
-        >
+        <Typography variant="h4" sx={heroHomeStyles.headingText}>
           <p>Monitor your</p>
           <p>
-            <span
-              style={{
-                backgroundImage: 'linear-gradient(147.7deg, #6942E2 19.37%, #28E7C5 77.65%)',
-                backgroundClip: 'text',
-                color: 'transparent',
-                WebkitTextStrokeWidth: 'thin',
-              }}
-            >
-              performance
-            </span>{' '}
-            like
+            <span style={heroHomeStyles.gradientText}>performance</span> like
           </p>
           <p>never before</p>
         </Typography>

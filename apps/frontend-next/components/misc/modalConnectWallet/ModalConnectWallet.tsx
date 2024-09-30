@@ -1,9 +1,9 @@
 'use client';
+import ButtonConnectWallet from '@/components/Common/ButtonConnectWallet/ButtonConnectWallet';
 import { useWallet } from '@alephium/web3-react';
 import { Box, Modal, Typography } from '@mui/material';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import ButtonConnectWallet from '../ButtonConnectWallet';
 
 const PRIVATE_ROUTES = ['/wallet', '/profit', '/profile', 'notifications'];
 

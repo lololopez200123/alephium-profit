@@ -1,15 +1,15 @@
 'use client';
-import Chart from '@/components/Chart';
+import Chart from '@/components/Common/Chart/Chart';
 import { Box, Button, Typography } from '@mui/material';
 import { userBalanceAtom } from '@/store/userBalanceAtom';
 import { useAtom } from 'jotai';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TokenDetails } from '../../../backend-nest/src/indexer-alephium/interfaces/balance';
-import ItemFavourites from '@/components/itemFavourites/ItemFavourites';
-import ModalFavouritesCoin from '@/components/modalFavouritesCoin/modalFavouritesCoin';
 import formatPNLvalue from '@/utils/formatPnl';
 import Fuse from 'fuse.js';
 import { searchTermAtom } from '@/store/searchAtom';
+import ModalFavouritesCoin from '@/components/misc/modalFavouritesCoin/modalFavouritesCoin';
+import ItemFavourites from '@/components/Profit/itemFavourites/ItemFavourites';
 
 const selectedTime = ['1D', '1W', '1M', '1Y'];
 

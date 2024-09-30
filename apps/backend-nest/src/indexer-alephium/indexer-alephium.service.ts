@@ -29,8 +29,8 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class IndexerAlephiumService {
-  private readonly baseUrl = 'https://indexer.alph.pro/api';
-  private readonly MOBULA_URL = 'https://api.mobula.io/api/1';
+  private readonly baseUrl = this.configService.get('ALPH_INDEXER_API_URL');
+  private readonly MOBULA_URL = this.configService.get('MOBULA_API_URL');
   private readonly MOBULA_API_KEY = this.configService.get('MOBULA_API_KEY');
   private readonly ALEPHIUM_NODE = 'https://backend.mainnet.alephium.org';
 

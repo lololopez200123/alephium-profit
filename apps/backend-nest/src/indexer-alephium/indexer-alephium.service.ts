@@ -80,10 +80,15 @@ export class IndexerAlephiumService {
       // Verify if the token is listed
       if (listedTokensMap.has(tokenAddress)) {
         const token = listedTokensMap.get(tokenAddress);
+        let amount: BigNumber;
 
-        const amount = new BigNumber(tokenBalance.balance).dividedBy(
-          new BigNumber(10).pow(token.decimals),
-        );
+        if (token.decimals !== 0) {
+          amount = new BigNumber(tokenBalance.balance).dividedBy(
+            new BigNumber(10).pow(token.decimals),
+          );
+        } else {
+          amount = new BigNumber(tokenBalance.balance);
+        }
 
         const priceInAlph = new BigNumber(priceMap.get(tokenAddress) || 0);
 
@@ -415,6 +420,7 @@ export class IndexerAlephiumService {
       const address = user.address;
 
       const balanceResponse = await this.getMyBalance(address, true);
+
       const { tokens, totalAmount } = balanceResponse;
 
       await this.updateBalanceHistory(address, tokens, totalAmount);

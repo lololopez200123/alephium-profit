@@ -4,6 +4,10 @@
 
 A profit and loss tracking application for Alephium, built with Next.js and NestJS.
 
+## Official Documentation
+
+[Access the Official Documentation](https://alephium-profit.gitbook.io/alephium-profit-docs) 📘
+
 ## Table of Contents
 
 - [Project Structure](#project-structure)

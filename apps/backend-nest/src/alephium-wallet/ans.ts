@@ -115,8 +115,7 @@ export const resolveName = async (nameString: string): Promise<Name | null> => {
   if (name) {
     const isValid = isValidName(name);
     if (isValid) {
-      const isLinked = await isNameLinked(name);
-      console.log(isLinked);
+      await isNameLinked(name);
       return name;
     }
   }

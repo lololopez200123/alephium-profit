@@ -238,7 +238,7 @@ export class IndexerAlephiumService {
     const dataResponse = await firstValueFrom(
       this.httpService
         .get<MobulaResponse>(url, {
-          headers: { 'x-api-key': this.MOBULA_API_KEY },
+          headers: { Authorization: this.MOBULA_API_KEY },
         })
         .pipe(
           map((response) => response.data.data), // Accede correctamente a la propiedad 'data'
@@ -305,7 +305,6 @@ export class IndexerAlephiumService {
         }),
       ),
     );
-    console.log('Fetched balance:', response);
     return response;
   }
 

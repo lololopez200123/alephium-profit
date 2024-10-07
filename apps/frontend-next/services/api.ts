@@ -4,6 +4,10 @@ interface FetchOptions {
   method: string;
   headers: { [key: string]: string };
   body?: string;
+  next?: {
+    revalidate: number;
+    tags?: string[];
+  };
   credentials?: RequestCredentials;
 }
 
@@ -93,7 +97,10 @@ export async function getPopularCoinsInfo() {
     headers: {
       'Content-Type': 'application/json',
     },
-    // It is not necessary to include credentials if authentication is not required
+    next: {
+      revalidate: 60,
+      tags: ['popularCoinsInfo'],
+    },
   });
 }
 

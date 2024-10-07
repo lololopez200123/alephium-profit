@@ -23,8 +23,6 @@ export async function GET(request: Request) {
       },
     });
 
-    console.log('Backend response:', res);
-
     if (!res.ok) {
       const errorData = await res.json();
       return NextResponse.json({ message: errorData.message || 'Failed to retrieve balance' }, { status: res.status });

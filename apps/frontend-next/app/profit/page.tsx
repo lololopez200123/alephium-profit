@@ -16,7 +16,7 @@ export type TokenDetailsWithPNL = TokenDetails & {
   pnl: number;
 };
 
-interface tract {
+interface Tract {
   amount: number;
   initialAmountOnAlph: number;
   finalAmountOnAlph: number;
@@ -78,10 +78,10 @@ function ProfitCharts() {
         return 0;
       }
 
-      // Filter the history according to the time range and order for ascending Timestamp
+      // filters the history according to the time range and orders by Timestamp ascending
       const filteredHistory = balance.totalFavouriteHistory.filter((entry) => entry.timestamp >= timeRange).sort((a, b) => a.timestamp - b.timestamp);
 
-      // Filter the entries containing the specific token
+      // filters the entries containing the specific token
       const tokenHistory = filteredHistory
         .map((history) => {
           const tokenData = history.tokens.find((t) => t.name === token.name);
@@ -94,64 +94,68 @@ function ProfitCharts() {
           }
           return null;
         })
-        .filter((data) => data !== null) as { timestamp: number; amount: number; amountOnAlph: number }[];
+        .filter((data): data is { timestamp: number; amount: number; amountOnAlph: number } => data !== null);
 
       if (tokenHistory.length === 0) {
         return 0;
       }
 
       // Function to divide the history into sections
-      const divideTracts = (history: { timestamp: number; amount: number; amountOnAlph: number }[]): tract[] => {
-        const tramos: tract[] = [];
-        let currentTramo: tract | null = null;
+      const divideTracts = (history: { timestamp: number; amount: number; amountOnAlph: number }[]): Tract[] => {
+        const tracts: Tract[] = [];
+        let currentTract: Tract | null = null;
+        let previousEntry: (typeof history)[0] | null = null;
 
         history.forEach((entry) => {
-          if (!currentTramo || entry.amount !== currentTramo.amount) {
-            // Start a new section when the amount changes
-            if (currentTramo) {
-              // Update the final value of the previous section
-              currentTramo.finalAmountOnAlph = entry.amountOnAlph;
-              tramos.push(currentTramo);
+          if (!currentTract || entry.amount !== currentTract.amount) {
+            // If there is a current section, update its endamountonalph with the last value before the change
+            if (currentTract && previousEntry) {
+              currentTract.finalAmountOnAlph = previousEntry.amountOnAlph;
+              tracts.push(currentTract);
             }
-            // Start a new section
-            currentTramo = {
+
+            currentTract = {
               amount: entry.amount,
               initialAmountOnAlph: entry.amountOnAlph,
-              finalAmountOnAlph: entry.amountOnAlph,
+              finalAmountOnAlph: entry.amountOnAlph, // Inicialmente igual al inicial
             };
           } else {
-            // Update the final value of the current section
-            currentTramo.finalAmountOnAlph = entry.amountOnAlph;
+            currentTract.finalAmountOnAlph = entry.amountOnAlph;
           }
+          // keep track of the previous entry
+          previousEntry = entry;
         });
 
-        // Add the last section if it exists
-        if (currentTramo) {
-          tramos.push(currentTramo);
+        // Añade el último tramo si existe
+        if (currentTract) {
+          tracts.push(currentTract);
         }
 
-        return tramos;
+        return tracts;
       };
 
-      const tramos = divideTracts(tokenHistory);
+      const tracts = divideTracts(tokenHistory);
 
-      let gananciaTotal = 0;
-      let valorInicialTotal = 0;
+      // Calculate the weights based on the initial investment of each section
+      const weights = tracts.map((tramo) => tramo.amount * tramo.initialAmountOnAlph);
+      const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
 
-      tramos.forEach((tramo) => {
-        const valorInicial = tramo.amount * tramo.initialAmountOnAlph;
-        const valorFinal = tramo.amount * tramo.finalAmountOnAlph;
+      let totalProfit = 0;
+
+      tracts.forEach((tract, index) => {
+        const valorInicial = tract.amount * tract.initialAmountOnAlph;
+        const valorFinal = tract.amount * tract.finalAmountOnAlph;
         const ganancia = valorFinal - valorInicial;
 
-        gananciaTotal += ganancia;
-        valorInicialTotal += valorInicial;
+        const pesoRelativo = weights[index] / totalWeight; // relative weight of the section
+        totalProfit += ganancia * pesoRelativo;
       });
 
-      if (valorInicialTotal === 0) {
+      if (totalWeight === 0) {
         return 0;
       }
 
-      const pnlTotal = (gananciaTotal / valorInicialTotal) * 100;
+      const pnlTotal = (totalProfit / totalWeight) * 100;
 
       return pnlTotal;
     },

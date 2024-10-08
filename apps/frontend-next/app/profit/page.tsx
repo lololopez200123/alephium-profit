@@ -126,7 +126,7 @@ function ProfitCharts() {
           previousEntry = entry;
         });
 
-        // Añade el último tramo si existe
+        // Add the last section if it exists
         if (currentTract) {
           tracts.push(currentTract);
         }
@@ -143,21 +143,21 @@ function ProfitCharts() {
       let totalProfit = 0;
 
       tracts.forEach((tract, index) => {
-        const valorInicial = tract.amount * tract.initialAmountOnAlph;
-        const valorFinal = tract.amount * tract.finalAmountOnAlph;
-        const ganancia = valorFinal - valorInicial;
+        const initialValue = tract.amount * tract.initialAmountOnAlph;
+        const finalValue = tract.amount * tract.finalAmountOnAlph;
+        const profit = finalValue - initialValue;
 
-        const pesoRelativo = weights[index] / totalWeight; // relative weight of the section
-        totalProfit += ganancia * pesoRelativo;
+        const relativeWeight = weights[index] / totalWeight; // relative weight of the section
+        totalProfit += profit * relativeWeight;
       });
 
       if (totalWeight === 0) {
         return 0;
       }
 
-      const pnlTotal = (totalProfit / totalWeight) * 100;
+      const totalPNL = (totalProfit / totalWeight) * 100;
 
-      return pnlTotal;
+      return totalPNL;
     },
     [balance?.totalFavouriteHistory, timeRange]
   );

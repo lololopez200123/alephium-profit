@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { map, catchError } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
@@ -33,6 +33,7 @@ export class IndexerAlephiumService {
   private readonly MOBULA_URL = this.configService.get('MOBULA_API_URL');
   private readonly MOBULA_API_KEY = this.configService.get('MOBULA_API_KEY');
   private readonly ALEPHIUM_NODE = 'https://backend.mainnet.alephium.org';
+  private logger = new Logger(IndexerAlephiumService.name);
 
   constructor(
     private httpService: HttpService,
@@ -55,115 +56,164 @@ export class IndexerAlephiumService {
     address: string,
     skipHistoryUpdate: boolean = false,
   ): Promise<BalanceResponse> {
-    const balance = await this.fetchBalance(address);
-    // const DECIMALS_ALPH = 18;
+    try {
+      const balance = await this.fetchBalance(address);
+      if (!balance || !balance.tokens || balance.tokens.length === 0) {
+        this.logger.warn(
+          `getMyBalance: No balance or tokens found for address ${address}`,
+        );
+        return {
+          totalAmount: 0,
+          tokens: [],
+          totalHistory: [],
+          totalFavouriteHistory: [],
+        };
+      }
+      this.logger.log('getMyBalance: Fetched balance', address, balance);
 
-    // Obtain the listed tokens and their prices from the database
-    const listedTokens = await this.tokensService.getTokens();
-    const tokenAddresses = listedTokens.map((token) => token.address);
+      // Obtain the listed tokens and their prices from the database
+      const listedTokens = await this.tokensService.getTokens();
+      const tokenAddresses = listedTokens.map((token) => token.address);
 
-    // believe a map of tokens listed by direct
-    const listedTokensMap = new Map<string, Token>();
-    listedTokens.forEach((token) => {
-      listedTokensMap.set(token.address, token);
-    });
+      if (!listedTokens || listedTokens.length === 0) {
+        this.logger.warn('getMyBalance: No listed tokens found');
+        return {
+          totalAmount: 0,
+          tokens: [],
+          totalHistory: [],
+          totalFavouriteHistory: [],
+        };
+      }
 
-    const priceMap = await this.tokensService.getTokenPrices(tokenAddresses);
+      // believe a map of tokens listed by direct
+      const listedTokensMap = new Map<string, Token>();
+      listedTokens.forEach((token) => {
+        listedTokensMap.set(token.address, token);
+      });
 
-    // Process the user's balances
-    let totalAmountOnAlph = new BigNumber(0);
-    const tokensWithDetails: TokenDetails[] = [];
+      const priceMap = await this.tokensService.getTokenPrices(tokenAddresses);
 
-    for (const tokenBalance of balance.tokens) {
-      const tokenAddress = tokenBalance.token.address;
+      if (!priceMap) {
+        this.logger.warn('getMyBalance: No price map found');
+      }
 
-      // Verify if the token is listed
-      if (listedTokensMap.has(tokenAddress)) {
-        const token = listedTokensMap.get(tokenAddress);
-        let amount: BigNumber;
+      // Process the user's balances
+      let totalAmountOnAlph = new BigNumber(0);
+      const tokensWithDetails: TokenDetails[] = [];
 
-        if (token.decimals !== 0) {
-          amount = new BigNumber(tokenBalance.balance).dividedBy(
-            new BigNumber(10).pow(token.decimals),
+      for (const tokenBalance of balance.tokens) {
+        const tokenAddress = tokenBalance.token.address;
+
+        // Verify if the token is listed
+        if (listedTokensMap.has(tokenAddress)) {
+          const token = listedTokensMap.get(tokenAddress);
+          let amount: BigNumber;
+
+          if (!tokenBalance.balance || tokenBalance.balance === '0') {
+            this.logger.warn(
+              `getMyBalance: Invalid or zero balance for token ${tokenAddress}`,
+            );
+            continue; // Saltar este token
+          }
+
+          if (token.decimals !== 0) {
+            amount = new BigNumber(tokenBalance.balance).dividedBy(
+              new BigNumber(10).pow(token.decimals),
+            );
+          } else {
+            amount = new BigNumber(tokenBalance.balance);
+          }
+
+          const priceInAlph = new BigNumber(priceMap.get(tokenAddress) || 0);
+
+          if (priceInAlph.isZero()) {
+            this.logger.warn(
+              `getMyBalance: Price for token ${tokenAddress} is 0`,
+            );
+            continue; // Saltar este token si el precio es 0
+          }
+
+          const amountOnAlph = amount.multipliedBy(priceInAlph);
+
+          totalAmountOnAlph = totalAmountOnAlph.plus(amountOnAlph);
+
+          this.logger.log(`getMyBalance: Processed token ${token.name}`, {
+            amount: amount.toString(),
+            priceInAlph: priceInAlph.toString(),
+            amountOnAlph: amountOnAlph.toString(),
+          });
+
+          tokensWithDetails.push({
+            name: token.name,
+            amount: amount.toNumber(),
+            amountOnAlph: amountOnAlph.toNumber(),
+            logo: token.logo,
+            percent: 0, // will be calculated later
+            isFavourite: false, // will be calculated later
+          });
+        }
+      }
+
+      // Calculate the percentage for each token
+      tokensWithDetails.forEach((token) => {
+        const amountOnAlph = new BigNumber(token.amountOnAlph);
+        token.percent = totalAmountOnAlph.isZero()
+          ? 0
+          : amountOnAlph
+              .dividedBy(totalAmountOnAlph)
+              .multipliedBy(100)
+              .toNumber();
+      });
+
+      // Get the user's favorite tokens
+      const favouriteTokens = await this.userService.getFavoriteCoins(address);
+      tokensWithDetails.forEach((token) => {
+        token.isFavourite = favouriteTokens.includes(token.name);
+      });
+
+      // Build the initial answer
+      const response: BalanceResponse = {
+        totalAmount: totalAmountOnAlph.toNumber(),
+        tokens: tokensWithDetails,
+        totalHistory: [], // will be filled later
+        totalFavouriteHistory: [], // will be filled later
+      };
+
+      if (!skipHistoryUpdate) {
+        // Verificar si se debe actualizar el historial (solo si han pasado 30 minutos)
+        const shouldUpdateHistory = await this.shouldUpdateHistory(address);
+
+        if (shouldUpdateHistory) {
+          // Actualizar el historial
+          await this.updateBalanceHistory(
+            address,
+            tokensWithDetails,
+            totalAmountOnAlph.toNumber(),
           );
-        } else {
-          amount = new BigNumber(tokenBalance.balance);
         }
 
-        const priceInAlph = new BigNumber(priceMap.get(tokenAddress) || 0);
+        const shouldUpdateFavouriteHistory =
+          await this.shouldUpdateFavouriteHistory(address);
 
-        const amountOnAlph = amount.multipliedBy(priceInAlph);
-
-        totalAmountOnAlph = totalAmountOnAlph.plus(amountOnAlph);
-
-        tokensWithDetails.push({
-          name: token.name,
-          amount: amount.toNumber(),
-          amountOnAlph: amountOnAlph.toNumber(),
-          logo: token.logo,
-          percent: 0, // will be calculated later
-          isFavourite: false, // will be calculated later
-        });
+        if (shouldUpdateFavouriteHistory) {
+          await this.updateFavouriteBalanceHistory(
+            address,
+            tokensWithDetails,
+            totalAmountOnAlph.toNumber(),
+          );
+        }
       }
+
+      // Obtener el historial
+      const history = await this.getBalanceHistory(address);
+      const favouriteHistory = await this.getBalanceFavouritesHistory(address);
+      response.totalHistory = history;
+      response.totalFavouriteHistory = favouriteHistory;
+
+      return response;
+    } catch (error) {
+      this.logger.error('getMyBalance: Error', error);
     }
-
-    // Calculate the percentage for each token
-    tokensWithDetails.forEach((token) => {
-      const amountOnAlph = new BigNumber(token.amountOnAlph);
-      token.percent = totalAmountOnAlph.isZero()
-        ? 0
-        : amountOnAlph
-            .dividedBy(totalAmountOnAlph)
-            .multipliedBy(100)
-            .toNumber();
-    });
-
-    // Get the user's favorite tokens
-    const favouriteTokens = await this.userService.getFavoriteCoins(address);
-    tokensWithDetails.forEach((token) => {
-      token.isFavourite = favouriteTokens.includes(token.name);
-    });
-
-    // Build the initial answer
-    const response: BalanceResponse = {
-      totalAmount: totalAmountOnAlph.toNumber(),
-      tokens: tokensWithDetails,
-      totalHistory: [], // will be filled later
-      totalFavouriteHistory: [], // will be filled later
-    };
-
-    if (!skipHistoryUpdate) {
-      // Verificar si se debe actualizar el historial (solo si han pasado 30 minutos)
-      const shouldUpdateHistory = await this.shouldUpdateHistory(address);
-
-      if (shouldUpdateHistory) {
-        // Actualizar el historial
-        await this.updateBalanceHistory(
-          address,
-          tokensWithDetails,
-          totalAmountOnAlph.toNumber(),
-        );
-      }
-
-      const shouldUpdateFavouriteHistory =
-        await this.shouldUpdateFavouriteHistory(address);
-
-      if (shouldUpdateFavouriteHistory) {
-        await this.updateFavouriteBalanceHistory(
-          address,
-          tokensWithDetails,
-          totalAmountOnAlph.toNumber(),
-        );
-      }
-    }
-
-    // Obtener el historial
-    const history = await this.getBalanceHistory(address);
-    const favouriteHistory = await this.getBalanceFavouritesHistory(address);
-    response.totalHistory = history;
-    response.totalFavouriteHistory = favouriteHistory;
-
-    return response;
   }
 
   /**
@@ -408,7 +458,7 @@ export class IndexerAlephiumService {
     }
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+  @Cron(CronExpression.EVERY_DAY_AT_9PM, {
     name: 'automaticUpdateAllUsersBalanceHistory',
     timeZone: 'America/Argentina/Buenos_Aires',
   })
@@ -417,11 +467,8 @@ export class IndexerAlephiumService {
 
     for (const user of users) {
       const address = user.address;
-
       const balanceResponse = await this.getMyBalance(address, true);
-
       const { tokens, totalAmount } = balanceResponse;
-
       await this.updateBalanceHistory(address, tokens, totalAmount);
     }
   }
